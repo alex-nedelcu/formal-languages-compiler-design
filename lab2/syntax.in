@@ -1,0 +1,44 @@
+program ::= VAR <declarationList> ; cmpdstmt .
+
+declarationList ::= <declaration> | <declaration> ; declarationList
+
+declaration ::= define <simpleType> <identifier>
+
+simpleType ::= "bool" | "integer"
+
+arraydecl ::= "ARRAY" "[" nr "]" "OF" type1
+
+type  ::= type1|arraydecl
+
+cmpdstmt ::= "BEGIN" stmtlist "END"
+
+stmtlist ::= stmt | stmt ";" stmtlist
+
+stmt ::= simplstmt | structstmt
+
+simplstmt ::= assignstmt | iostmt
+
+assignstmt ::= IDENTIFIER ":=" expression
+
+expression ::= expression "+" term | term
+
+term ::= term "*" factor | factor
+
+factor ::= "(" expression ")" | IDENTIFIER
+
+iostmt ::= "READ" | "WRITE" "(" IDENTIFIER ")"
+
+structstmt ::= cmpdstmt | ifstmt | whilestmt
+
+ifstmt ::= "IF" condition "THEN" stmt ["ELSE" stmt]
+
+whilestmt ::= "WHILE" condition "DO" stmt
+
+condition ::= expression RELATION expression
+
+RELATION ::= "<" | "<=" | "=" | "<>" | ">=" | ">"
+
+
+TODO: 
+- redefine identifier or other non-terminals defined in lexic.txt but used in syntax.in
+- check again this file

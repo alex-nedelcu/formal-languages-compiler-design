@@ -1,0 +1,51 @@
+Alphabet
+
+	uppercase letters from English alphabet: A | B | ... | Z
+	lowercase letters from English alphabet: a | b | ... | z
+	underline character: _
+	decimal digits: 0 | 1 | ... | 9
+
+Lexic
+	
+	Special Symbols
+
+		operators: + | - | * | / | = | == | =$ | =% | < | <= | > | >=
+		separators: [ | ] | { | } | ( | ) | : | ; | space
+		reserved words: define integer string bool read display if else loop start end
+
+	Identifiers
+
+		<identifier> ::= <lowercaseLetter> | <lowercaseLetter>
+		<lowercaseLetter> ::= a | b | ... | z
+		<uppercaseLetter> ::= A | B | ... | Z
+		<nonZeroDigit> ::= 1 | 2 | ... | 9
+		<digit> ::= 0 | <nonZeroDigit>
+
+	Constants
+
+		integer
+
+			<nonZeroDigit> ::= 1 | 2 | ... | 9
+			<digit> ::= 0 | <nonZeroDigit>
+			<sign> ::= + | -
+			<digitSequence> ::= <digit> | <digit><digitSequence>
+			<unsigned> ::= <nonZeroDigit> | <nonZeroDigit><digitSequence>
+			<signed> ::= <unsigned> | <sign><unsigned>
+
+		bool
+
+			<bool> ::= TRUE | FALSE
+
+		string
+
+			<string> ::= 
+			<lowercaseLetter> ::= a | b | ... | z
+			<uppercaseLetter> ::= A | B | ... | Z
+			<digit> ::= 0 | 1 | 2 | ... | 9
+			<acceptedCharacter> = -
+
+
+TODO:
+- define string
+- add github link in the pdf on moodle
+- check again this file
