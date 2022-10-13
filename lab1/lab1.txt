@@ -1,17 +1,16 @@
 ************** p1) Compute min of 3 integer numbers
 
-	start
+	START
 
 		define integer first;
 		define integer second;
 		define integer third;
-		define integer min;
 
 		read(first);
 		read(second);
 		read(third);
 
-		min = first;
+		define integer min = first;
 
 		if (second < min) {
 			min = second;
@@ -24,12 +23,12 @@
 		diplay("minimum-value:");
 		display(min);
 
-	end
+	END
 
 
 ************** p2) Compute largest divisor of a natural number that is less than the number itself
 
-	start
+	START
 
 		define integer number;
 		define integer divisor;
@@ -45,12 +44,12 @@
 		display("divisor-is:");
 		display(divisor);
 
-	end
+	END
 
 
 ************** p3) Compute largest value from array
 
-	start
+	START
 
 		define integer[100] array;
 		define integer index;
@@ -58,21 +57,23 @@
 
 		loop (iterator=index, start=0, step=1, until=99) {
 			read(array[index]);
+
 			if (index == 0) {
 				max = array[index];
-			} else if (array[index] < max) {
+			} else if (array[index] > max) {
 				max = array[index];
 			}
 		}
 
-		display("maximum-value-is:");
+		display("maximum-value-from-array-is:");
 		display(max);
 
-	end
+	END
 
 
 ************** p1err)
-	start
+	
+	START
 
 		define bool flag;
 		define string s1;
@@ -81,16 +82,11 @@
 		read(s1);
 		read(2s);
 
-		# == equal
-		# =& does not equal for booleans
-		# =% does not equal for integers
-		# =$ does not equal for strings
-
-		if (s1 =$ 2s) {
+		if (s1 != 2s) {
 			display(s1);
 			display("and~);
 			display(2s);
 			display("are-different");
 		}
 
-	end
+	END
