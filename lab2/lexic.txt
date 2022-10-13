@@ -1,4 +1,4 @@
-Alphabet:
+Alphabet
 
 	Uppercase English letters: A | B | ... | Z
 	Lowercase English letters: a | b | ... | z
@@ -40,6 +40,6 @@ Lexic
 			<letter> ::= a | ... | z | A | ... | Z
 			<validCharacter> ::= - | ! | ? | : | .
 
-		Bool constants:
+		Bool constants
 
 			<BOOL> ::= TRUE | FALSE
