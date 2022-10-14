@@ -1,0 +1,47 @@
+Alphabet
+
+	Uppercase English letters: A | B | ... | Z
+	Lowercase English letters: a | b | ... | z
+	Decimal digits: 0 | 1 | ... | 9
+	Underline character: _
+
+Lexic
+
+	Special Symbols
+
+		Operators: + | - | / | * | = | == | != | > | >= | < | <= | %
+		Separators: ( | ) | [ | ] | { | } | , | ; | whitespace
+		Reserved wrods: START | END | define | integer | string | bool | read | display | if | else | stop | loop
+
+
+	Identifiers
+
+		Rule: identifiers start with lowercase letters followed by any type of letter of digit
+
+		<identifier> ::= <lowercaseLetter> | <identifier><letter> | <identifier><digit>
+		<letter> ::= <lowercaseLetter> | <uppercaseLetter>
+		<lowercaseLetter> ::= a | ... | z
+		<uppercaseLetter> ::= A | ... | Z
+		<digit> ::= 0 | 1 | 2 | ... | 9
+
+	Constants
+
+		Integer constants
+
+			<INTEGER> ::= <unsignedNumber> | <sign><unsignedNumber>
+			<sign> ::= + | -
+			<unsignedNumber> ::= <nonZeroDigit> | <nonZeroDigit><digitSequence>
+			<digitSequence> ::= <digit> | <digit><digitSequence>
+			<digit> ::= 0 | <nonZeroDigit>
+			<nonZeroDigit> ::= 1 | 2 | ... | 9
+			
+		String constants
+
+			<STRING> ::= <character> | <character><STRING>
+			<character> ::= <letter> | <validCharacter>
+			<letter> ::= a | ... | z | A | ... | Z
+			<validCharacter> ::= - | ! | ? | : | .
+
+		Bool constants
+
+			<BOOL> ::= TRUE | FALSE

@@ -1,0 +1,40 @@
+	<program> ::= START <statementList> END
+	<statementList> ::= <statement> | <statement><statementList>
+	<statement> ::= <simpleStatement> | <structStatement>	
+	<simpleStatement> ::= <defineStatement> | <ioStatement> | <assignStatement>
+	<defineStatement> ::= define <type> <identifier>;
+	<type> ::= <simpleType> | <arrayType>
+	<simpleType> ::= integer | string | bool
+	<arrayType> ::= <simpleType>[<unsignedNumber>]
+	<identifier> ::= <lowercaseLetter> | <identifier><letter> | <identifier><digit>
+	<ioStatement> ::= <readStatement> | <writeStatement>;
+	<readStatement> ::= read(<identifier>)
+	<writeStatement> ::= display(<displayable>)
+	<displayable> ::= <identifier> | <INTEGER> | <STRING> | <BOOL>
+	<assignStatement> ::= <identifier> = <expression>
+	<expression> ::= <term> | <expression> + <term> | <expression> - <term>
+	<term> ::= <factor> | <term> * <factor> | <term> / <factor>
+	<factor> ::= (<expression>) | <identifier> | <INTEGER> | <identifier>[<unsignedNumber>]
+	<structStatement> ::= <ifStatement> | <loopStatement>
+	<ifStatement> ::= <ifBranch> | <ifBranch> else { <statementList> } | <ifBranch> else <ifStatement>
+	<ifBranch> ::= if (<condition>) { <statementList> }
+	<condition> ::= <expression> <RELATION> <expression>
+	<RELATION> ::= < | <= | > | >= | == | !=
+	<loopStatement> ::= loop(iterator=<identifier>, start=<expression>, step=<expression>, until=expression) { <statementList> }
+
+	<INTEGER> ::= <unsignedNumber> | <sign><unsignedNumber>
+	<STRING> ::= <letter> | <validCharacter> | <letterSequence>
+	<BOOL> ::= TRUE | FALSE
+
+	<letter> ::= <lowercaseLetter> | <uppercaseLetter>
+	<lowercaseLetter> ::= a | ... | z
+	<uppercaseLetter> ::= A | ... | Z
+	<digit> ::= 0 | 1 | 2 | ... | 9
+	<unsignedNumber> ::= <nonZeroDigit> | <nonZeroDigit><digitSequence>
+	<digitSequence> ::= <digit> | <digit><digitSequence>
+	<digit> ::= 0 | <nonZeroDigit>
+	<nonZeroDigit> ::= 1 | 2 | ... | 9
+	<sign> ::= + | -
+	<character> ::= <letter> | <validCharacter>
+	<letter> ::= a | ... | z | A | ... | Z
+	<validCharacter> ::= - | ! | ? | : | .
