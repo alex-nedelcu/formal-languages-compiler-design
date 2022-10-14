@@ -14,12 +14,12 @@
 	<assignStatement> ::= <identifier> = <expression>
 	<expression> ::= <term> | <expression> + <term> | <expression> - <term>
 	<term> ::= <factor> | <term> * <factor> | <term> / <factor>
-	<factor> ::= (<expression>) | <identifier> | <INTEGER>
+	<factor> ::= (<expression>) | <identifier> | <INTEGER> | <identifier>[<unsignedNumber>]
 	<structStatement> ::= <ifStatement> | <loopStatement>
 	<ifStatement> ::= <ifBranch> | <ifBranch> else { <statementList> } | <ifBranch> else <ifStatement>
 	<ifBranch> ::= if (<condition>) { <statementList> }
 	<condition> ::= <expression> <RELATION> <expression>
-	RELATION ::= < | <= | > | >= | == | !=
+	<RELATION> ::= < | <= | > | >= | == | !=
 	<loopStatement> ::= loop(iterator=<identifier>, start=<expression>, step=<expression>, until=expression) { <statementList> }
 
 	<INTEGER> ::= <unsignedNumber> | <sign><unsignedNumber>
@@ -35,6 +35,6 @@
 	<digit> ::= 0 | <nonZeroDigit>
 	<nonZeroDigit> ::= 1 | 2 | ... | 9
 	<sign> ::= + | -
-	<letterSequence> ::= <letter><STRING> | <validCharacter><STRING>
+	<character> ::= <letter> | <validCharacter>
 	<letter> ::= a | ... | z | A | ... | Z
 	<validCharacter> ::= - | ! | ? | : | .

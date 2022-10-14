@@ -16,6 +16,8 @@ Lexic
 
 	Identifiers
 
+		Rule: identifiers start with lowercase letters followed by any type of letter of digit
+
 		<identifier> ::= <lowercaseLetter> | <identifier><letter> | <identifier><digit>
 		<letter> ::= <lowercaseLetter> | <uppercaseLetter>
 		<lowercaseLetter> ::= a | ... | z
@@ -35,8 +37,8 @@ Lexic
 			
 		String constants
 
-			<STRING> ::= <letter> | <validCharacter> | <letterSequence>
-			<letterSequence> ::= <letter><STRING> | <validCharacter><STRING>
+			<STRING> ::= <character> | <character><STRING>
+			<character> ::= <letter> | <validCharacter>
 			<letter> ::= a | ... | z | A | ... | Z
 			<validCharacter> ::= - | ! | ? | : | .
 
