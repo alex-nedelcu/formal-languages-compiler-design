@@ -11,7 +11,7 @@ Lexic
 
 		Operators: + | - | / | * | = | == | != | > | >= | < | <= | %
 		Separators: ( | ) | [ | ] | { | } | , | ; | whitespace
-		Reserved wrods: START | END | define | integer | string | bool | read | display | if | else | stop | loop
+		Reserved wrods: START | END | define | integer | string | bool | read | display | if | else | stop | loop | iterator | from | step | until
 
 
 	Identifiers
@@ -26,10 +26,9 @@ Lexic
 
 	Constants
 
-		Integer constants
+		Integer constants (e.g. P#123#, N#5#)
 
-			<INTEGER> ::= <unsignedNumber> | <sign><unsignedNumber>
-			<sign> ::= + | -
+			<INTEGER> ::= P#<unsignedNumber># | N#<unsignedNumber>#
 			<unsignedNumber> ::= <nonZeroDigit> | <nonZeroDigit><digitSequence>
 			<digitSequence> ::= <digit> | <digit><digitSequence>
 			<digit> ::= 0 | <nonZeroDigit>
@@ -38,9 +37,9 @@ Lexic
 		String constants
 
 			<STRING> ::= <character> | <character><STRING>
-			<character> ::= <letter> | <validCharacter>
+			<character> ::= <letter> | <underline>
 			<letter> ::= a | ... | z | A | ... | Z
-			<validCharacter> ::= - | ! | ? | : | .
+			<underline> ::= _
 
 		Bool constants
 

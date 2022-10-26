@@ -1,0 +1,17 @@
+START
+
+    define bool flag;
+    define string s1;
+    define string 2s;
+
+    read(s1);
+    read(s2);
+
+    if (s1 != s2) {
+        display(s1);
+        display("and~);
+        display(s2);
+        display("are_different_");
+    }
+
+END

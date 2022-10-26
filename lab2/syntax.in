@@ -21,20 +21,15 @@
 	<condition> ::= <expression> <RELATION> <expression>
 	<RELATION> ::= < | <= | > | >= | == | !=
 	<loopStatement> ::= loop(iterator=<identifier>, start=<expression>, step=<expression>, until=expression) { <statementList> }
-
-	<INTEGER> ::= <unsignedNumber> | <sign><unsignedNumber>
-	<STRING> ::= <letter> | <validCharacter> | <letterSequence>
+		
+	<INTEGER> ::= P#<unsignedNumber># | N#<unsignedNumber>#
+	<STRING> ::= <character> | <character><STRING>
 	<BOOL> ::= TRUE | FALSE
 
-	<letter> ::= <lowercaseLetter> | <uppercaseLetter>
-	<lowercaseLetter> ::= a | ... | z
-	<uppercaseLetter> ::= A | ... | Z
-	<digit> ::= 0 | 1 | 2 | ... | 9
 	<unsignedNumber> ::= <nonZeroDigit> | <nonZeroDigit><digitSequence>
 	<digitSequence> ::= <digit> | <digit><digitSequence>
 	<digit> ::= 0 | <nonZeroDigit>
 	<nonZeroDigit> ::= 1 | 2 | ... | 9
-	<sign> ::= + | -
-	<character> ::= <letter> | <validCharacter>
+	<character> ::= <letter> | <underline>
 	<letter> ::= a | ... | z | A | ... | Z
-	<validCharacter> ::= - | ! | ? | : | .
+	<underline> ::= _
