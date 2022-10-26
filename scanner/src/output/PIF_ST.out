@@ -1,0 +1,107 @@
+>>> SCAN RESULT <<<
+
+IDENTIFIERS SYMBOL TABLE
+Node{key='array', index=0}
+Node{key='index', index=1}
+Node{key='max', index=2}
+
+CONSTANTS SYMBOL TABLE
+Node{key='P#100#', index=0}
+Node{key='P#0#', index=1}
+Node{key='P#1#', index=2}
+Node{key='P#99#', index=3}
+Node{key='"maximum_value_from_array_is_"', index=4}
+
+PIF
+Pair{symbol='START', position=-1}
+Pair{symbol='define', position=-1}
+Pair{symbol='integer', position=-1}
+Pair{symbol='[', position=-1}
+Pair{symbol='const', position=0}
+Pair{symbol=']', position=-1}
+Pair{symbol='id', position=0}
+Pair{symbol=';', position=-1}
+Pair{symbol='define', position=-1}
+Pair{symbol='integer', position=-1}
+Pair{symbol='id', position=1}
+Pair{symbol=';', position=-1}
+Pair{symbol='define', position=-1}
+Pair{symbol='integer', position=-1}
+Pair{symbol='id', position=2}
+Pair{symbol=';', position=-1}
+Pair{symbol='loop', position=-1}
+Pair{symbol='(', position=-1}
+Pair{symbol='iterator', position=-1}
+Pair{symbol='=', position=-1}
+Pair{symbol='id', position=1}
+Pair{symbol=',', position=-1}
+Pair{symbol='from', position=-1}
+Pair{symbol='=', position=-1}
+Pair{symbol='const', position=1}
+Pair{symbol=',', position=-1}
+Pair{symbol='step', position=-1}
+Pair{symbol='=', position=-1}
+Pair{symbol='const', position=2}
+Pair{symbol=',', position=-1}
+Pair{symbol='until', position=-1}
+Pair{symbol='=', position=-1}
+Pair{symbol='const', position=3}
+Pair{symbol=')', position=-1}
+Pair{symbol='{', position=-1}
+Pair{symbol='read', position=-1}
+Pair{symbol='(', position=-1}
+Pair{symbol='id', position=0}
+Pair{symbol='[', position=-1}
+Pair{symbol='id', position=1}
+Pair{symbol=']', position=-1}
+Pair{symbol=')', position=-1}
+Pair{symbol=';', position=-1}
+Pair{symbol='if', position=-1}
+Pair{symbol='(', position=-1}
+Pair{symbol='id', position=1}
+Pair{symbol='=', position=-1}
+Pair{symbol='=', position=-1}
+Pair{symbol='const', position=1}
+Pair{symbol=')', position=-1}
+Pair{symbol='{', position=-1}
+Pair{symbol='id', position=2}
+Pair{symbol='=', position=-1}
+Pair{symbol='id', position=0}
+Pair{symbol='[', position=-1}
+Pair{symbol='id', position=1}
+Pair{symbol=']', position=-1}
+Pair{symbol=';', position=-1}
+Pair{symbol='}', position=-1}
+Pair{symbol='else', position=-1}
+Pair{symbol='if', position=-1}
+Pair{symbol='(', position=-1}
+Pair{symbol='id', position=0}
+Pair{symbol='[', position=-1}
+Pair{symbol='id', position=1}
+Pair{symbol=']', position=-1}
+Pair{symbol='>', position=-1}
+Pair{symbol='id', position=2}
+Pair{symbol=')', position=-1}
+Pair{symbol='{', position=-1}
+Pair{symbol='id', position=2}
+Pair{symbol='=', position=-1}
+Pair{symbol='id', position=0}
+Pair{symbol='[', position=-1}
+Pair{symbol='id', position=1}
+Pair{symbol=']', position=-1}
+Pair{symbol=';', position=-1}
+Pair{symbol='}', position=-1}
+Pair{symbol='}', position=-1}
+Pair{symbol='display', position=-1}
+Pair{symbol='(', position=-1}
+Pair{symbol='const', position=4}
+Pair{symbol=')', position=-1}
+Pair{symbol=';', position=-1}
+Pair{symbol='display', position=-1}
+Pair{symbol='(', position=-1}
+Pair{symbol='id', position=2}
+Pair{symbol=')', position=-1}
+Pair{symbol=';', position=-1}
+Pair{symbol='END', position=-1}
+
+Scanning successfully finished

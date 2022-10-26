@@ -1,0 +1,20 @@
+START
+
+    define integer[P#100#] array;
+    define integer index;
+    define integer max;
+
+    loop (iterator=index, from=P#0#, step=P#1#, until=P#99#) {
+        read(array[index]);
+
+        if (index == P#0#) {
+            max = array[index];
+        } else if (array[index] > max) {
+            max = array[index];
+        }
+    }
+
+    display("maximum_value_from_array_is_");
+    display(max);
+
+END

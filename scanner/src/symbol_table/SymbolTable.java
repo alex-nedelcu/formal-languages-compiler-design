@@ -17,4 +17,9 @@ public class SymbolTable implements ISymbolTable {
     public Integer search(String key) {
         return (hashTable.search(key));
     }
+
+    @Override
+    public String toString() {
+        return hashTable.toString();
+    }
 }

@@ -1,32 +1,47 @@
+import exceptions.LexicalException;
+import program_internal_form.IProgramInternalForm;
+import program_internal_form.ProgramInternalForm;
+import scanner.IScanner;
+import scanner.Scanner;
 import symbol_table.ISymbolTable;
 import symbol_table.SymbolTable;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+
 public class Main {
 
-    /* Task 1b */
-    
-    public static void main(String[] args) {
-        ISymbolTable symbolTable = new SymbolTable();
+    // TODO: class diagram
+    // TODO: documentation
 
-        System.out.println(symbolTable.add("abcd"));
-        System.out.println(symbolTable.add("bacd"));
-        System.out.println(symbolTable.add("dabc"));
-        System.out.println(symbolTable.add("dbca"));
-        System.out.println("-----");
-        System.out.println(symbolTable.search("abcd"));
-        System.out.println(symbolTable.search("bacd"));
-        System.out.println(symbolTable.search("dabc"));
-        System.out.println(symbolTable.search("dbca"));
-        System.out.println("-----");
-        System.out.println(symbolTable.add("123"));
-        System.out.println(symbolTable.search("213"));
-        System.out.println("-----");
-        System.out.println(symbolTable.add("x"));
-        System.out.println(symbolTable.add("x"));
-        System.out.println(symbolTable.add("x"));
-        System.out.println(symbolTable.search("x"));
-        System.out.println("-----");
-        System.out.println(symbolTable.add("y"));
-        System.out.println(symbolTable.search("dabc"));
+    public static void main(String[] args) throws IOException {
+        final String PROGRAM_PATH = "/Users/alexnedelcu/Desktop/Uni/FLCD/formal-languages-compiler-design/scanner/src/input/p3.txt";
+        final String TOKENS_PATH = "/Users/alexnedelcu/Desktop/Uni/FLCD/formal-languages-compiler-design/scanner/src/input/token.in";
+        final String OUTPUT_FILE = "/Users/alexnedelcu/Desktop/Uni/FLCD/formal-languages-compiler-design/scanner/src/output/PIF_ST.out";
+
+        ISymbolTable identifierSymbolTable = new SymbolTable();
+        ISymbolTable constantsSymbolTable = new SymbolTable();
+        IProgramInternalForm PIF = new ProgramInternalForm();
+
+        IScanner scanner = new Scanner(identifierSymbolTable, constantsSymbolTable, PIF, TOKENS_PATH);
+
+        File outputFile = new File(OUTPUT_FILE);
+        outputFile.createNewFile();
+        FileWriter writer = new FileWriter(OUTPUT_FILE);
+
+        try {
+            var scanResult = scanner.scan(PROGRAM_PATH);
+            writer.write(scanResult.toString());
+            writer.write("\n\nScanning successfully finished");
+        } catch (LexicalException lexicalException) {
+            writer.write("Scanning failed!\n");
+            writer.write(lexicalException.getMessage());
+        } catch (IOException ioException) {
+            System.out.println("Error while writing to file: " + ioException.getMessage());
+        } finally {
+            writer.close();
+        }
+
     }
 }

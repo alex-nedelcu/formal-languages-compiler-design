@@ -1,18 +1,44 @@
 package symbol_table;
 
-import lombok.Builder;
-
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Objects;
 
 public class HashTable implements IHashTable {
 
     private static final int MAXIMUM_CAPACITY = 257;
 
-    @Builder
-    static private class Node {
+    static private class Node implements Comparable<Node> {
         String key;
+
+        @Override
+        public String toString() {
+            return "Node{" +
+                    "key='" + key + '\'' +
+                    ", index=" + insertionIndex +
+                    '}';
+        }
+
         Integer insertionIndex;
         Node next;
+
+        public Node(String key, Integer insertionIndex, Node next) {
+            this.key = key;
+            this.insertionIndex = insertionIndex;
+            this.next = next;
+        }
+
+        @Override
+        public int compareTo(Node other) {
+            if (Objects.equals(this.insertionIndex, other.insertionIndex)) {
+                return 0;
+            } else if (this.insertionIndex < other.insertionIndex) {
+                return -1;
+            } else {
+                return 1;
+            }
+        }
     }
 
     private final Node[] table;
@@ -35,11 +61,7 @@ public class HashTable implements IHashTable {
 
         int bucket = hash(key);
         Node bucketTraverser = table[bucket];
-        Node newNode = Node.builder()
-                .key(key)
-                .insertionIndex(count)
-                .next(null)
-                .build();
+        Node newNode = new Node(key, count, null);
 
         if (bucketTraverser != null) {
             Node currentHead = table[bucket];
@@ -81,6 +103,26 @@ public class HashTable implements IHashTable {
 
     private boolean areKeysEquals(String first, String second) {
         return Objects.equals(first, second);
+    }
+
+    @Override
+    public String toString() {
+        List<Node> nodes = new ArrayList<>();
+
+        for (Node node : table) {
+            var head = node;
+
+            while (head != null) {
+                nodes.add(head);
+                head = head.next;
+            }
+        }
+
+        Collections.sort(nodes);
+
+        return nodes.stream()
+                .map(Node::toString)
+                .reduce("", (accumulator, current) -> accumulator + "\n" + current);
     }
 
     private int hash(String key) {
