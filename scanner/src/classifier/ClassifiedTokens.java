@@ -15,6 +15,7 @@ public class ClassifiedTokens {
     private final List<String> initialTokens;
     private final List<String> keywords;
     private final List<String> operators;
+    private final List<String> separators;
     private final List<String> excluded;
 
     public List<String> getExcluded() {
@@ -32,8 +33,6 @@ public class ClassifiedTokens {
     public List<String> getSeparators() {
         return separators;
     }
-
-    private final List<String> separators;
 
     public ClassifiedTokens(List<String> initialTokens) {
         this.initialTokens = initialTokens;
