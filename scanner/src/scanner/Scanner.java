@@ -131,7 +131,7 @@ public class Scanner implements IScanner {
     }
 
     private List<String> reconstructAggregatedOperators(List<String> tokens) {
-        List<String> partialAggregateOperators = List.of("!", ">", "<");
+        List<String> partialAggregateOperators = List.of("!", ">", "<", "=");
 
         if (tokens.size() < 2) {
             return tokens;

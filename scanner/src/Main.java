@@ -12,13 +12,11 @@ import java.io.IOException;
 
 public class Main {
 
-    // TODO: class diagram
-    // TODO: documentation
-
     public static void main(String[] args) throws IOException {
-        final String PROGRAM_PATH = "/Users/alexnedelcu/Desktop/Uni/FLCD/formal-languages-compiler-design/scanner/src/input/p3.txt";
-        final String TOKENS_PATH = "/Users/alexnedelcu/Desktop/Uni/FLCD/formal-languages-compiler-design/scanner/src/input/token.in";
-        final String OUTPUT_FILE = "/Users/alexnedelcu/Desktop/Uni/FLCD/formal-languages-compiler-design/scanner/src/output/PIF_ST.out";
+        final String BASE_PATH = "/Users/alexnedelcu/Desktop/Uni/FLCD/formal-languages-compiler-design/scanner/src";
+        final String PROGRAM_PATH = BASE_PATH + "/input/p1.txt";
+        final String TOKENS_PATH = BASE_PATH + "/input/token.in";
+        final String OUTPUT_FILE = BASE_PATH + "/output/PIF_ST.out";
 
         ISymbolTable identifierSymbolTable = new SymbolTable();
         ISymbolTable constantsSymbolTable = new SymbolTable();
