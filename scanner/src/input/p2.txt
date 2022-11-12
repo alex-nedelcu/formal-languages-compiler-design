@@ -5,7 +5,7 @@ START
 
     read(number);
 
-    loop (iterator=divisor, from=number-P#1#, step=N#1#, until=P#1#) {
+    loop (iterator=divisor, from=number-P#1#, step=N#1123#, until=P#1#) {
         if (number % divisor == P#0#) {
             stop;
         }

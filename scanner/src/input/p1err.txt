@@ -1,7 +1,7 @@
 START
 
     define bool flag;
-    define string s1;
+    define string s1 = P#1;
     define string 2s;
 
     read(s1);

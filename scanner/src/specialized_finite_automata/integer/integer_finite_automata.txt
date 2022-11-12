@@ -1,0 +1,5 @@
+Q : {q0, q1, q2, q3, q4, q5}
+SIGMA : {P, N, #, d}
+F : {q5}
+q : q0
+TRANSITIONS : {delta(q0,P)=q1 ; delta(q0,N)=q1 ; delta(q1,#)=q3 ; delta(q2,#)=q3 ; delta(q3,d)=q4 ; delta(q4,d)=q4 ; delta(q4,#)=q5}

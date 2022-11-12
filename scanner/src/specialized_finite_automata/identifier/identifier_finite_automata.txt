@@ -1,0 +1,5 @@
+Q : {q0, q1}
+SIGMA : {0, 1, 2}
+F : {q1}
+q : q0
+TRANSITIONS : {delta(q0,0)=q1 ; delta(q1,0)=q1 ; delta(q1,1)=q1 ; delta(q1,2)=q1}

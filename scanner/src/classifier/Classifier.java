@@ -1,5 +1,8 @@
 package classifier;
 
+import specialized_finite_automata.identifier.IdentifierFiniteAutomata;
+import specialized_finite_automata.integer.IntegerFiniteAutomata;
+
 import java.util.List;
 
 public class Classifier {
@@ -11,9 +14,9 @@ public class Classifier {
             return TokenType.OPERATOR;
         } else if (matchesSeparator(token, classifiedTokens.getSeparators())) {
             return TokenType.SEPARATOR;
-        } else if (matchesIdentifier(token)) {
+        } else if (matchesIdentifierByFiniteAutomata(token)) {
             return TokenType.IDENTIFIER;
-        } else if (matchesConstant(token)) {
+        } else if (matchesConstantByFiniteAutomata(token)) {
             return TokenType.CONSTANT;
         } else {
             return TokenType.UNKNOWN;
@@ -43,9 +46,19 @@ public class Classifier {
         return token.matches("^[a-z]+[a-z|A-z|0-9]*$");
     }
 
+    private static boolean matchesIdentifierByFiniteAutomata(String token) {
+        return new IdentifierFiniteAutomata().validateSequence(token);
+    }
+
     private static boolean matchesConstant(String token) {
         return token.matches("TRUE|FALSE") // boolean
-                || token.matches("^(P#0|N#0|[N|P]#[1-9]+[0-9]*)#$") // signed integers
-                || token.matches("^\"[a-z|A-Z|0-9|_]+\"$"); // non-empty strings containing letters, digits or _
+            || token.matches("^(P#0|N#0|[N|P]#[1-9]+[0-9]*)#$") // signed integers
+            || token.matches("^\"[a-z|A-Z|0-9|_]+\"$"); // non-empty strings containing letters, digits or _
+    }
+
+    private static boolean matchesConstantByFiniteAutomata(String token) {
+        return new IntegerFiniteAutomata().validateSequence(token)
+            || token.matches("TRUE|FALSE") // boolean
+            || token.matches("^\"[a-z|A-Z|0-9|_]+\"$"); // non-empty strings containing letters, digits or _
     }
 }

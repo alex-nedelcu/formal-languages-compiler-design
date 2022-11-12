@@ -89,7 +89,7 @@ public class FiniteAutomata implements IFiniteAutomata {
         return finalStates.contains(currentState);
     }
 
-    private String getDestinationStateBySourceStateAndThrough(String sourceState, String through) {
+    protected String getDestinationStateBySourceStateAndThrough(String sourceState, String through) {
         Optional<Transition> transition = transitions.stream()
             .filter(iterator -> Objects.equals(iterator.fromState, sourceState) && Objects.equals(iterator.through, through))
             .findFirst();
