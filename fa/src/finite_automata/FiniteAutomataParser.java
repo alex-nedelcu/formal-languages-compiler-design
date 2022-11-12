@@ -44,7 +44,7 @@ public class FiniteAutomataParser implements IFiniteAutomataParser {
                 case STATES_KEY -> finiteAutomata.setStates(extractStates(value));
                 case ALPHABET_KEY -> finiteAutomata.setAlphabet(extractAlphabet(value));
                 case FINAL_STATES_KEY -> finiteAutomata.setFinalStates(extractStates(value));
-                case INITIAL_STATE_KEY -> finiteAutomata.setInitialState(extractInitialStates(value));
+                case INITIAL_STATE_KEY -> finiteAutomata.setInitialState(extractInitialState(value));
                 case TRANSITIONS_KEY -> finiteAutomata.setTransitions(extractTransitions(value));
                 default -> throw new FiniteAutomataException("Invalid key " + key);
             }
@@ -68,7 +68,7 @@ public class FiniteAutomataParser implements IFiniteAutomataParser {
                 .collect(Collectors.toList());
     }
 
-    private String extractInitialStates(String value) {
+    private String extractInitialState(String value) {
         return sanitize(value);
     }
 
@@ -93,7 +93,7 @@ public class FiniteAutomataParser implements IFiniteAutomataParser {
     private List<String> getFileContentByPath(String filename) {
         try {
             return Files.readAllLines(Path.of(filename));
-        } catch (IOException ioException) {
+        } catch (IOException ignored) {
             throw new RuntimeException("Error reading the file " + filename);
         }
     }
