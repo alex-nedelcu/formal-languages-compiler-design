@@ -1,6 +1,8 @@
 package finite_automata;
 
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 
 public class FiniteAutomata implements IFiniteAutomata {
@@ -41,19 +43,78 @@ public class FiniteAutomata implements IFiniteAutomata {
     }
 
     @Override
+    public Set<String> getStates() {
+        return states;
+    }
+
+    @Override
+    public Set<String> getAlphabet() {
+        return alphabet;
+    }
+
+    @Override
+    public Set<String> getFinalStates() {
+        return finalStates;
+    }
+
+    @Override
+    public String getInitialState() {
+        return initialState;
+    }
+
+    @Override
+    public List<Transition> getTransitions() {
+        return transitions;
+    }
+
+    @Override
+    public boolean validateSequence(String sequence) {
+        if (isNullOrEmpty(sequence)) {
+            return false;
+        }
+
+        String currentState = initialState;
+
+        for (int index = 0; index < sequence.length(); index += 1) {
+            String currentSequenceElement = String.valueOf(sequence.charAt(index));
+            String nextState = getDestinationStateBySourceStateAndThrough(currentState, currentSequenceElement);
+
+            if (nextState == null) {
+                return false;
+            }
+
+            currentState = nextState;
+        }
+
+        return finalStates.contains(currentState);
+    }
+
+    private String getDestinationStateBySourceStateAndThrough(String sourceState, String through) {
+        Optional<Transition> transition = transitions.stream()
+            .filter(iterator -> Objects.equals(iterator.fromState, sourceState) && Objects.equals(iterator.through, through))
+            .findFirst();
+
+        return transition.map(value -> value.toState).orElse(null);
+    }
+
+    private boolean isNullOrEmpty(String string) {
+        return string == null || string.trim().isEmpty();
+    }
+
+    @Override
     public boolean validateSelf() {
         return areComponentsSet()
-                && statesIncludeFinalStates()
-                && statesIncludeInitialState()
-                && areTransitionsValid();
+            && statesIncludeFinalStates()
+            && statesIncludeInitialState()
+            && areTransitionsValid();
     }
 
     private boolean areTransitionsValid() {
         return transitions.stream()
-                .map(this::isTransitionValid)
-                .filter(isCurrentTransactionValid -> isCurrentTransactionValid == false)
-                .toList()
-                .size() == 0;
+            .map(this::isTransitionValid)
+            .filter(isCurrentTransactionValid -> isCurrentTransactionValid == false)
+            .toList()
+            .isEmpty();
     }
 
     private boolean isTransitionValid(Transition transition) {
@@ -88,20 +149,20 @@ public class FiniteAutomata implements IFiniteAutomata {
 
     private boolean areComponentsSet() {
         return states != null && states.size() > 0
-                && alphabet != null && alphabet.size() > 0
-                && finalStates != null && finalStates.size() > 0
-                && initialState != null
-                && transitions != null && transitions.size() > 0;
+            && alphabet != null && alphabet.size() > 0
+            && finalStates != null && finalStates.size() > 0
+            && initialState != null
+            && transitions != null && transitions.size() > 0;
     }
 
     @Override
     public String toString() {
         return "FiniteAutomata{" +
-                "states=" + states +
-                ", alphabet=" + alphabet +
-                ", finalStates=" + finalStates +
-                ", initialState='" + initialState + '\'' +
-                ", transitions=" + transitions +
-                '}';
+            "states=" + states +
+            ", alphabet=" + alphabet +
+            ", finalStates=" + finalStates +
+            ", initialState='" + initialState + '\'' +
+            ", transitions=" + transitions +
+            '}';
     }
 }

@@ -13,7 +13,7 @@ import java.io.IOException;
 public class Main {
 
     public static void main(String[] args) throws IOException {
-        final String BASE_PATH = "/Users/alexnedelcu/Desktop/Uni/FLCD/formal-languages-compiler-design/scanner/src";
+        final String BASE_PATH = "/Users/alexandru.nedelcu.ext/Desktop/Other/Uni/FLCD/formal-languages-compiler-design/scanner/src";
         final String PROGRAM_PATH = BASE_PATH + "/input/p1err.txt";
         final String TOKENS_PATH = BASE_PATH + "/input/token.in";
         final String OUTPUT_FILE = BASE_PATH + "/output/PIF_ST.out";

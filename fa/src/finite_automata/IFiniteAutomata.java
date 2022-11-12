@@ -15,5 +15,17 @@ public interface IFiniteAutomata {
 
     void setTransitions(List<Transition> transitions);
 
+    Set<String> getStates();
+
+    Set<String> getAlphabet();
+
+    Set<String> getFinalStates();
+
+    String getInitialState();
+
+    List<Transition> getTransitions();
+
+    boolean validateSequence(String sequence);
+
     boolean validateSelf();
 }
