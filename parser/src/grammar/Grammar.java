@@ -91,8 +91,14 @@ public class Grammar implements IGrammar {
     @Override
     public List<Production> getProductionsByNonTerminal(String nonTerminal) {
         return productions
-            .stream()
-            .filter(production -> production.source.equals(nonTerminal))
-            .collect(Collectors.toList());
+                .stream()
+                .filter(production -> production.source.equals(nonTerminal))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public boolean isContextFree() {
+        return productions.stream()
+                .noneMatch(production -> production.source.length() > 1 || !nonTerminals.contains(production.source));
     }
 }

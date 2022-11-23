@@ -12,4 +12,6 @@ public interface IGrammar {
     List<Production> getProductions();
 
     List<Production> getProductionsByNonTerminal(String nonTerminal);
+
+    boolean isContextFree();
 }
