@@ -69,6 +69,10 @@ public class FiniteAutomata implements IFiniteAutomata {
 
     @Override
     public boolean validateSequence(String sequence) {
+        if (finalStates.contains(initialState) && sequence.isEmpty()) {
+            return true;
+        }
+
         if (isNullOrEmpty(sequence)) {
             return false;
         }
@@ -106,7 +110,24 @@ public class FiniteAutomata implements IFiniteAutomata {
         return areComponentsSet()
             && statesIncludeFinalStates()
             && statesIncludeInitialState()
-            && areTransitionsValid();
+            && areTransitionsValid()
+            && isDeterministic()
+            ;
+    }
+
+    private boolean isDeterministic() {
+        for (Transition first : transitions) {
+            for (Transition second : transitions) {
+                if (Objects.equals(first.fromState, second.fromState) &&
+                    Objects.equals(first.through, second.through) &&
+                    !Objects.equals(first.toState, second.toState)
+                ) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
     }
 
     private boolean areTransitionsValid() {
