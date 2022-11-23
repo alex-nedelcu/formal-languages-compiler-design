@@ -43,10 +43,14 @@ public class Grammar implements IGrammar {
         List<String> lines = getFileContentByPath(filename);
 
         lines.forEach(line -> {
-            line = removeAllCharactersFromString(line, " ");
             List<String> lineTokens = List.of(line.split(":"));
-            String key = lineTokens.get(0);
-            String value = lineTokens.get(1);
+
+            if (lineTokens.size() != 2) {
+                throw new GrammarException("Grammar file format is invalid!");
+            }
+
+            String key = lineTokens.get(0).trim();
+            String value = lineTokens.get(1).trim();
 
             switch (key) {
                 case NON_TERMINALS_KEY -> nonTerminals = parseNonTerminalsLine(value);
