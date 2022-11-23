@@ -17,7 +17,7 @@ public class Production {
             throw new GrammarException("Production format is invalid: " + productionString);
         }
 
-        this.source = tokens.get(0);
+        this.source = tokens.get(0).trim();
         this.targets = Stream.of(tokens.get(1).split("\\|")).map(String::trim).collect(Collectors.toList());
     }
 
