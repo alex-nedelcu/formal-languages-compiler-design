@@ -10,6 +10,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class Grammar implements IGrammar {
 
@@ -55,6 +56,26 @@ public class Grammar implements IGrammar {
                 default -> throw new GrammarException("Invalid key " + key);
             }
         });
+    }
+
+    private Set<String> parseNonTerminalsLine(String value) {
+        // e.g. value: S A B
+        return Stream.of(value.split(" ")).map(String::trim).collect(Collectors.toSet());
+    }
+
+    private Set<String> parseTerminalsLine(String value) {
+        // e.g. value: a b +
+        return Stream.of(value.split(" ")).map(String::trim).collect(Collectors.toSet());
+    }
+
+    private String parseStartingSymbolLine(String value) {
+        return value.trim();
+    }
+
+    private List<Production> parseProductionsLine(String value) {
+        return Stream.of(value.split(";"))
+            .map(Production::new)
+            .collect(Collectors.toList());
     }
 
     private List<String> getFileContentByPath(String filename) {
