@@ -37,6 +37,7 @@ public class Main {
                     System.out.println("Productions for non-terminal " + nonTerminal + ": ");
                     System.out.println(grammar.getProductionsByNonTerminal(nonTerminal));
                 }
+                case "5" -> System.out.println(grammar.isContextFree());
 
                 default -> System.out.println("Invalid option!");
             }
