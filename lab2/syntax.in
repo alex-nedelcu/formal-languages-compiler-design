@@ -7,11 +7,11 @@
 	<simpleType> ::= integer | string | bool
 	<arrayType> ::= <simpleType>[<unsignedNumber>]
 	<identifier> ::= <lowercaseLetter> | <identifier><letter> | <identifier><digit>
-	<ioStatement> ::= <readStatement> | <writeStatement>;
+	<ioStatement> ::= <readStatement>; | <writeStatement>;
 	<readStatement> ::= read(<identifier>)
 	<writeStatement> ::= display(<displayable>)
 	<displayable> ::= <identifier> | <INTEGER> | <STRING> | <BOOL>
-	<assignStatement> ::= <identifier> = <expression>
+	<assignStatement> ::= <identifier> = <expression>;
 	<expression> ::= <term> | <expression> + <term> | <expression> - <term>
 	<term> ::= <factor> | <term> * <factor> | <term> / <factor>
 	<factor> ::= (<expression>) | <identifier> | <INTEGER> | <identifier>[<unsignedNumber>]
@@ -20,7 +20,7 @@
 	<ifBranch> ::= if (<condition>) { <statementList> }
 	<condition> ::= <expression> <RELATION> <expression>
 	<RELATION> ::= < | <= | > | >= | == | !=
-	<loopStatement> ::= loop(iterator=<identifier>, start=<expression>, step=<expression>, until=expression) { <statementList> }
+	<loopStatement> ::= loop(iterator=<identifier>, from=<expression>, step=<expression>, until=<expression>) { <statementList> }
 		
 	<INTEGER> ::= P#<unsignedNumber># | N#<unsignedNumber>#
 	<STRING> ::= <character> | <character><STRING>

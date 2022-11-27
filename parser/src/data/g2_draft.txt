@@ -1,0 +1,142 @@
+--- non-terminals
+
+    A = program
+    B = statement list
+    C = statement
+    D = simple statement
+    E = struct statement
+    F = define statement
+    G = input/output statement
+    H = assign statement
+    I = type
+    J = identifier
+    K = simple type
+    L = array type
+    M = unsigned number
+    N = lowercase letter
+    O = letter
+    P = digit
+    Q = read statement
+    R = write statement
+    S = displayable
+    T = INTEGER CONSTANT
+    U = STRING CONSTANT
+    V = BOOL CONSTANT
+    W = expression
+    X = term
+    Y = factor
+    Z = if statement
+    1 = loop statement
+    2 = if branch
+    3 = condition
+    4 = relation
+    5 = character
+    6 = non zero digit
+    7 = digit sequence
+    8 = digit
+    9 = letter
+    0 = underline
+
+
+
+
+
+
+--- terminals
+
+    a = start
+    b = end
+    c = define
+    d = integer
+    e = string
+    f = bool
+    g = read
+    h = display
+    i = else
+    k = if
+    l = <=
+    m = >=
+    n = ==
+    o = !=
+    p = loop
+    q = iterator
+    r = from
+    s = step
+    t = until
+    u = P
+    v = N
+    w = TRUE
+    x = FALSE
+    zero = 0
+    one = 1
+    two = 2
+    three = 3
+    four = 4
+    five = 5
+    six = 6
+    seven = 7
+    eight = 8
+    nine = 9
+    lca = a
+    lcb = b
+    ...
+    lcz = z
+    uca = A
+    ucb = B
+    ...
+    ucz = Z
+    ; = ;
+    [ = [
+    ] = ]
+    ( = (
+    ) = )
+    = = =
+    + = +
+    - = -
+    * = *
+    / = /
+    < = <
+    > = >
+    # = #
+    _ = _
+
+
+
+
+
+
+--- productions
+
+    A->aBb
+    B->C|CB
+    C->D|E
+    D->F|G|H
+    F->cIJ;
+    I->K|L
+    K->d|e|f
+    L->K[M]
+    J->N|JO|JP
+    G->Q;|R;
+    Q->g(J)
+    R->h(S)
+    S->J|T|U|V
+    H->J=W;
+    W->X|W+X|W-X
+    X->Y|X*Y|X/Y
+    Y->(W)|J|T|J[M]
+    E->Z|1
+    Z->2|2i{B}|2iZ
+    2->k(3){B}
+    3->W4W
+    4-><|l|>|m|n|o
+    1->p(q=J,r=W,s=W,t=W) {B}
+    T->u#M#|v#M#
+    U->5|5U
+    V->w|x
+    M->6|67
+    7->8|87
+    8->zero|6
+    6->one|two|three|four|five|six|seven|eight|nine
+    5->9|0
+    9->lca|lcb|lcc|lcd|lce|lcf|lcg|lch|lci|lcj|lck|lcl|lcm|lcn|lco|lcp|lcq|lcr|lcs|lct|lcu|lcv|lcw|lcx|lcy|lcz|uca|ucb|ucc|ucd|uce|ucf|ucg|uch|uci|ucj|uck|ucl|ucm|ucn|uco|ucp|ucq|ucr|ucs|uct|ucu|ucv|ucw|ucx|ucy|ucz
+    0->_

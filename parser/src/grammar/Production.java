@@ -19,6 +19,14 @@ public class Production {
 
         this.source = tokens.get(0).trim();
         this.targets = Stream.of(tokens.get(1).split("\\|")).map(String::trim).collect(Collectors.toList());
+
+        validateSelf();
+    }
+
+    private void validateSelf() {
+        if (source.length() > 1) {
+            throw new GrammarException("Having terminals or non-terminals with length > 1 will cause system malfunctions: " + source);
+        }
     }
 
     @Override

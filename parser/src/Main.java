@@ -4,10 +4,9 @@ import grammar.IGrammar;
 import java.util.Scanner;
 
 public class Main {
-    // TODO for W10: complete Grammar class, g2.txt (transform syntax.in file)
-    // TODO future: LL(1)
+    // LL(1)
     public static void main(String[] args) {
-        IGrammar grammar = new Grammar("/Users/alexandru.nedelcu.ext/Desktop/Other/Uni/FLCD/formal-languages-compiler-design/parser/src/data/g1.txt");
+        IGrammar grammar = new Grammar("/Users/alexandru.nedelcu.ext/Desktop/Other/Uni/FLCD/formal-languages-compiler-design/parser/src/data/g2.txt");
         grammar.process();
 
         boolean stop = false;

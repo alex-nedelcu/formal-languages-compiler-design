@@ -1,4 +1,4 @@
 NON-TERMINALS : S A B
 TERMINALS : a b
 START : S
-PRODUCTIONS : S->aBA|bB|a ; A->a
+PRODUCTIONS : S->aBA|bB|a ; A->a ; A->aBB|B
