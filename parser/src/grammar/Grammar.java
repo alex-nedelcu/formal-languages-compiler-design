@@ -22,8 +22,6 @@ public class Grammar implements IGrammar {
     private Set<String> nonTerminals;
     private Set<String> terminals;
     private List<Production> productions;
-
-
     private String startingSymbol;
     public String filename;
 
@@ -43,6 +41,10 @@ public class Grammar implements IGrammar {
         List<String> lines = getFileContentByPath(filename);
 
         lines.forEach(line -> {
+            if (shouldBeIgnored(line)) {
+                return; // skip current line
+            }
+
             List<String> lineTokens = List.of(line.split(":"));
 
             if (lineTokens.size() != 2) {
@@ -60,6 +62,10 @@ public class Grammar implements IGrammar {
                 default -> throw new GrammarException("Invalid key " + key);
             }
         });
+    }
+
+    private boolean shouldBeIgnored(String line) {
+        return line.isEmpty() || line.trim().startsWith("#");
     }
 
     private Set<String> parseNonTerminalsLine(String value) {
@@ -105,21 +111,24 @@ public class Grammar implements IGrammar {
         return productions;
     }
 
-    private String getStartingSymbol() {
+    @Override
+    public String getStartingSymbol() {
         return startingSymbol;
     }
 
     @Override
     public List<Production> getProductionsByNonTerminal(String nonTerminal) {
-        return productions.stream()
-            .filter(production -> production.source.equals(nonTerminal))
+        return productions
+            .stream()
+            .filter(Production::hasUniqueSource)
+            .filter(production -> production.getUniqueSource().equals(nonTerminal))
             .collect(Collectors.toList());
     }
 
     @Override
     public boolean isContextFree() {
-        // productions sources must be single non-terminals
-        return productions.stream()
-            .noneMatch(production -> production.source.length() > 1 || !nonTerminals.contains(production.source));
+        return productions
+            .stream()
+            .allMatch(production -> production.hasUniqueSource() && nonTerminals.contains(production.getUniqueSource()));
     }
 }

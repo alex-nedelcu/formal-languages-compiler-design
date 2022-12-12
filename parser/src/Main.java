@@ -1,16 +1,12 @@
 import grammar.Grammar;
 import grammar.IGrammar;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Scanner;
 
-public class Main {
+public final class Main {
     // LL(1)
-    // only algorithm for FIRST and FOLLOW
     public static void main(String[] args) {
-        IGrammar grammar = new Grammar("/Users/alexandru.nedelcu.ext/Desktop/Other/Uni/FLCD/formal-languages-compiler-design/parser/src/data/g2.txt");
+        IGrammar grammar = new Grammar("/Users/alexandru.nedelcu.ext/Desktop/Other/Uni/FLCD/formal-languages-compiler-design/parser/src/data/g1.txt");
         grammar.process();
 
         boolean stop = false;

@@ -4,7 +4,9 @@ import java.util.List;
 import java.util.Set;
 
 public interface IGrammar {
+
     void process();
+
     Set<String> getNonTerminals();
 
     Set<String> getTerminals();
@@ -13,5 +15,8 @@ public interface IGrammar {
 
     List<Production> getProductionsByNonTerminal(String nonTerminal);
 
+    String getStartingSymbol();
+
     boolean isContextFree();
+
 }
