@@ -18,6 +18,11 @@ public class Grammar implements IGrammar {
     private static final String TERMINALS_KEY = "TERMINALS";
     private static final String STARTING_SYMBOL_KEY = "START";
     private static final String PRODUCTIONS_KEY = "PRODUCTIONS";
+    private static final String PRODUCTIONS_SEPARATOR = "~";
+    private static final String LINE_KEY_VALUE_SEPARATOR = ":";
+    private static final String NON_TERMINALS_SEPARATOR = " ";
+    private static final String TERMINALS_SEPARATOR = " ";
+    private static final String COMMENT_BEGINNING = "#";
 
     private Set<String> nonTerminals;
     private Set<String> terminals;
@@ -45,7 +50,7 @@ public class Grammar implements IGrammar {
                 return; // skip current line
             }
 
-            List<String> lineTokens = List.of(line.split(":"));
+            List<String> lineTokens = List.of(line.split(LINE_KEY_VALUE_SEPARATOR));
 
             if (lineTokens.size() != 2) {
                 throw new GrammarException("Grammar file format is invalid!");
@@ -65,17 +70,17 @@ public class Grammar implements IGrammar {
     }
 
     private boolean shouldBeIgnored(String line) {
-        return line.isEmpty() || line.trim().startsWith("#");
+        return line.isEmpty() || line.trim().startsWith(COMMENT_BEGINNING);
     }
 
     private Set<String> parseNonTerminalsLine(String value) {
         // e.g. value: S A B
-        return Stream.of(value.split(" ")).map(String::trim).collect(Collectors.toSet());
+        return Stream.of(value.split(NON_TERMINALS_SEPARATOR)).map(String::trim).collect(Collectors.toSet());
     }
 
     private Set<String> parseTerminalsLine(String value) {
         // e.g. value: a b +
-        return Stream.of(value.split(" ")).map(String::trim).collect(Collectors.toSet());
+        return Stream.of(value.split(TERMINALS_SEPARATOR)).map(String::trim).collect(Collectors.toSet());
     }
 
     private String parseStartingSymbolLine(String value) {
@@ -83,7 +88,7 @@ public class Grammar implements IGrammar {
     }
 
     private List<Production> parseProductionsLine(String value) {
-        return Stream.of(value.split(";"))
+        return Stream.of(value.split(PRODUCTIONS_SEPARATOR))
             .map(Production::new)
             .collect(Collectors.toList());
     }
