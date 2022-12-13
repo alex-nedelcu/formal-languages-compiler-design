@@ -4,8 +4,10 @@ import grammar.IGrammar;
 import grammar.Production;
 import grammar.SymbolSequence;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -13,8 +15,8 @@ import java.util.Set;
 public class Parser implements IParser {
 
     private static final String EPSILON = "EPSILON";
-    private final Map<String, Set<String>> first;
-    private final Map<String, Set<String>> follow;
+    private final Map<String, List<String>> first;
+    private final Map<String, List<String>> follow;
     private final IGrammar grammar;
 
     public Parser(IGrammar grammar) {
@@ -33,9 +35,9 @@ public class Parser implements IParser {
         Set<String> terminals = grammar.getTerminals();
         List<Production> productions = grammar.getProductions();
 
-        // initialize each non-terminal first set with an empty set
+        // initialize each non-terminal first with an empty list
         for (String nonTerminal : nonTerminals) {
-            first.put(nonTerminal, new HashSet<>());
+            first.put(nonTerminal, new ArrayList<>());
         }
 
         for (Production production : productions) {
@@ -58,8 +60,21 @@ public class Parser implements IParser {
     }
 
     private void initializeFollow() {
+        Set<String> nonTerminals = grammar.getNonTerminals();
+        String startingSymbol = grammar.getStartingSymbol();
 
+        // initialize follow of starting symbol with a singleton list containing EPSILON
+        // for all the other non-terminals, initialize their follow with an empty list
+        for (String nonTerminal : nonTerminals) {
+            if (nonTerminal.equals(startingSymbol)) {
+                List<String> singletonEpsilonList = new ArrayList<>(Collections.singleton(EPSILON));
+                follow.put(nonTerminal, singletonEpsilonList);
+            } else {
+                follow.put(nonTerminal, new ArrayList<>());
+            }
+        }
     }
+
 
     private boolean symbolBelongsToFirstOfKey(String symbol, String key) {
         return first != null && first.containsKey(key) && first.get(key).contains(symbol);
@@ -69,13 +84,37 @@ public class Parser implements IParser {
         return symbol != null && symbol.trim().equalsIgnoreCase(EPSILON);
     }
 
+    private boolean areMapsEqual(Map<String, List<String>> first, Map<String, List<String>> second) {
+        Set<String> firstMapKeys = first.keySet();
+        Set<String> secondMapKeys = second.keySet();
+
+        if (!areEqual(firstMapKeys, secondMapKeys)) {
+            return false;
+        }
+
+        for (String key : firstMapKeys) {
+            List<String> valueFromFirst = first.get(key);
+            List<String> valueFromSecond = second.get(key);
+
+            if (!areEqual(valueFromFirst, valueFromSecond)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private boolean areEqual(Collection<String> first, Collection<String> second) {
+        return first.equals(second);
+    }
+
     @Override
-    public Map<String, Set<String>> getFirst() {
+    public Map<String, List<String>> getFirst() {
         return first;
     }
 
     @Override
-    public Map<String, Set<String>> getFollow() {
+    public Map<String, List<String>> getFollow() {
         return follow;
     }
 }
