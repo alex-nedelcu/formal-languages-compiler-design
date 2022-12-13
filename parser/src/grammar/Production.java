@@ -2,6 +2,7 @@ package grammar;
 
 import exceptions.GrammarException;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -16,6 +17,12 @@ public class Production {
 
         this.sources = extractSource(productionTokens.get(0));
         this.targets = extractTargets(productionTokens.get(1));
+    }
+
+    public Production(String source, SymbolSequence target) {
+        this.sources = new SymbolSequence(source);
+        this.targets = new ArrayList<>();
+        this.targets.add(target);
     }
 
     private List<String> splitByArrow(String productionString) {
@@ -61,8 +68,8 @@ public class Production {
     @Override
     public String toString() {
         return "Production{" +
-            "sources=" + sources +
-            ", targets=" + targets +
-            '}';
+                "sources=" + sources +
+                ", targets=" + targets +
+                '}';
     }
 }

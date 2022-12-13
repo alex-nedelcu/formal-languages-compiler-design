@@ -1,3 +1,11 @@
+
+parser/parser.iml
+fa/fa.iml
+.idea/modules.xml
+.idea/misc.xml
+.idea/formal-languages-compiler-design.iml
+.idea/codeStyles/Project.xml
+.idea/codeStyles/codeStyleConfig.xml
 out
 .idea
 *.iml
