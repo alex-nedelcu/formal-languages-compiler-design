@@ -1,13 +1,4 @@
-NON-TERMINALS : SYMBOL_0 SYMBOL_1 SYMBOL_2
-TERMINALS : terminal_1 terminal_2 terminal_3 EPSILON
-START : SYMBOL_0
-PRODUCTIONS : SYMBOL_0 -> SYMBOL_1.SYMBOL_2 | terminal_2.SYMBOL_2 ~ SYMBOL_2 -> terminal_1 | terminal_3.SYMBOL_1 | EPSILON
-
-# Remarks:
-    # examples of SymbolSequence objects:
-    # SYMBOL_0
-    # SYMBOL_1.SYMBOL_2
-    # terminal_2.SYMBOL_2/ SYMBOL_2
-    # terminal_1
-    # terminal_3.SYMBOL_1
-    # EPSILON
+NON-TERMINALS : S A B C
+TERMINALS : x y z p w
+START : S
+PRODUCTIONS : S -> x | A | B ~ A -> EPSILON ~ B -> C ~ C -> z ~ A -> p ~ B -> w | y

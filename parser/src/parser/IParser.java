@@ -6,8 +6,8 @@ import java.util.Set;
 
 public interface IParser {
 
-    Map<String, Set<String>> getFirst();
+    Map<String, List<String>> getFirst();
 
-    Map<String, Set<String>> getFollow();
+    Map<String, List<String>> getFollow();
 
 }
