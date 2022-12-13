@@ -1,5 +1,7 @@
 import grammar.Grammar;
 import grammar.IGrammar;
+import parser.IParser;
+import parser.Parser;
 
 import java.util.Scanner;
 
@@ -8,6 +10,7 @@ public final class Main {
     public static void main(String[] args) {
         IGrammar grammar = new Grammar("/Users/alexandru.nedelcu.ext/Desktop/Other/Uni/FLCD/formal-languages-compiler-design/parser/src/data/g1.txt");
         grammar.process();
+        IParser parser = new Parser(grammar);
 
         boolean stop = false;
 
@@ -21,6 +24,8 @@ public final class Main {
             System.out.println("[3] Productions");
             System.out.println("[4] Productions for a given non-terminal");
             System.out.println("[5] Perform CFG check");
+            System.out.println("[6] Get FIRST");
+            System.out.println("[7] Get FOLLOW");
             System.out.print("> ");
 
             String option = keyboard.nextLine().trim();
@@ -38,6 +43,8 @@ public final class Main {
                     System.out.println(grammar.getProductionsByNonTerminal(nonTerminal));
                 }
                 case "5" -> System.out.println(grammar.isContextFree());
+                case "6" -> System.out.println(parser.getFirst());
+                case "7" -> System.out.println(parser.getFollow());
 
                 default -> System.out.println("Invalid option!");
             }
