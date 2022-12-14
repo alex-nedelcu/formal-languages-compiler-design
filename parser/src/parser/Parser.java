@@ -32,6 +32,7 @@ public class Parser implements IParser {
         Set<String> terminals = grammar.getTerminals();
         Set<Production> productions = new HashSet<>(grammar.getProductions());
 
+        // initialize each terminal first with the terminal itself
         for (String terminal : terminals) {
             first.put(terminal, List.of(terminal));
         }
@@ -64,39 +65,54 @@ public class Parser implements IParser {
         Set<String> nonTerminals = grammar.getNonTerminals();
         List<Production> productions = grammar.getProductions();
 
-        boolean added = false;
+        boolean isModified;
         do {
-            added = false;
+            isModified = false;
             for (Production production : productions) {
                 for (SymbolSequence target : production.targets) {
                     for (String symbol : target.getSymbols()) {
-                        var containsEpsilon = false;
-                        var temp = new HashSet<>(first.get(production.getUniqueSource()));
+                        var isNullable = false;
+                        var sourceFirst = new HashSet<>(first.get(production.getUniqueSource()));
                         ArrayList<String> addition;
+
+                        // Modify nothing if symbol is epsilon
                         if (isEpsilon(symbol)) {
                             addition = new ArrayList<>();
                         } else {
+                            // Add ( FIRST(symbol) - EPSILON )
+                            // If FIRST(symbol) contains EPSILON, it is nullable
                             addition = new ArrayList<>(first.get(symbol));
-                            containsEpsilon = addition.contains(EPSILON);
+                            isNullable = addition.contains(EPSILON);
                             addition.remove(EPSILON);
                         }
-                        if (!temp.containsAll(addition)) {
-                            added = true;
+
+                        // If first will be modified
+                        if (!sourceFirst.containsAll(addition)) {
+                            isModified = true;
                         }
-                        temp.addAll(addition);
-                        first.put(production.getUniqueSource(), temp.stream().toList());
-                        if (!containsEpsilon) {
+                        sourceFirst.addAll(addition);
+
+                        // Update FIRST
+                        first.put(production.getUniqueSource(), sourceFirst.stream().toList());
+
+                        // If a non-nullable step (i.e. FIRST(symbol) does not include EPSILON) was reached, stop.
+                        if (!isNullable) {
                             break;
                         }
                     }
-                    if (target.getSymbols().contains(EPSILON) || target.getSymbols().stream().allMatch(x -> (nonTerminals.contains(x) && first.get(x).contains(EPSILON)) || isEpsilon(x))) {
-                        var temp = new HashSet<>(first.get(production.getUniqueSource()));
-                        temp.add(EPSILON);
-                        first.put(production.getUniqueSource(), temp.stream().toList());
+
+                    boolean isNullable = target.getSymbols().stream()
+                            .allMatch(symbol -> (nonTerminals.contains(symbol) && first.get(symbol).contains(EPSILON))
+                                    || isEpsilon(symbol)
+                            );
+                    if (isNullable) {
+                        var sourceFirst = new HashSet<>(first.get(production.getUniqueSource()));
+                        sourceFirst.add(EPSILON);
+                        first.put(production.getUniqueSource(), sourceFirst.stream().toList());
                     }
                 }
             }
-        } while (added);
+        } while (isModified);
     }
 
     private List<String> concatenate(List<String> first, List<String> second) {
@@ -148,35 +164,50 @@ public class Parser implements IParser {
         Set<String> nonTerminals = grammar.getNonTerminals();
         List<Production> productions = grammar.getProductions();
 
+        // For each non-terminal
         for (String symbol : nonTerminals) {
             Set<String> currentValue = new HashSet<>(follow.get(symbol));
             Set<Production> matchingProductions = getProductionsWithSymbol(new HashSet<>(productions), symbol);
 
+            // For each production in which the non-terminal is in the RHS
             for (var production : matchingProductions) {
                 String leftSide = production.getUniqueSource();
                 SymbolSequence rightSide = production.targets.get(0);
 
-                int indexOfSymbol = rightSide.getSymbols().indexOf(symbol);
-                if (indexOfSymbol < rightSide.getSymbols().size() - 1) {
-                    boolean isBroken = false;
-                    for (int index = indexOfSymbol + 1; index < rightSide.getSymbols().size(); index++) {
-                        String nextSymbol = rightSide.getSymbols().get(index);
-                        Set<String> neighbourFirstValue = new HashSet<>(first.get(nextSymbol));
-                        neighbourFirstValue.remove(EPSILON);
-                        neighbourFirstValue.addAll(follow.get(symbol));
-                        currentValue.addAll(neighbourFirstValue);
-                        if (!first.get(nextSymbol).contains(EPSILON)) {
-                            isBroken = true;
-                            break;
-                        }
-                    }
-                    if (!isBroken) {
-                        currentValue.addAll(follow.get(leftSide));
-                        currentValue.add(EPSILON);
+                // Get all appearances of current symbol in the current production
+                var indexes = new ArrayList<Integer>();
+                for (int i = 0; i < rightSide.getSymbols().size(); i++) {
+                    if (rightSide.getSymbols().get(i).equals(symbol)) {
+                        indexes.add(i);
                     }
                 }
-                if (indexOfSymbol == rightSide.getSymbols().size() - 1) {
-                    currentValue.addAll(follow.get(leftSide));
+
+                // For each appearance of Symbol in the current Production
+                for(int indexOfSymbol : indexes){
+                    boolean isBetaNullable = true;
+
+                    // For each following symbol
+                    if (indexOfSymbol < rightSide.getSymbols().size() - 1) {
+                        for (int index = indexOfSymbol + 1; index < rightSide.getSymbols().size(); index++) {
+                            // FIRST(SYMBOL) = FIRST(SYMBOL) UNION FIRST(NEXT_SYMBOL)
+                            String nextSymbol = rightSide.getSymbols().get(index);
+                            Set<String> neighbourFirstValue = new HashSet<>(first.get(nextSymbol));
+                            neighbourFirstValue.remove(EPSILON);
+                            neighbourFirstValue.addAll(follow.get(symbol));
+                            currentValue.addAll(neighbourFirstValue);
+
+                            // STOP, if NEXT_SYMBOL is not nullable (i.e. its FIRST does not contain EPSILON)
+                            if (!first.get(nextSymbol).contains(EPSILON)) {
+                                isBetaNullable = false;
+                                break;
+                            }
+                        }
+                    }
+
+                    boolean isBetaNull = indexOfSymbol == rightSide.getSymbols().size() - 1;
+                    if (isBetaNull || isBetaNullable) {
+                        currentValue.addAll(follow.get(leftSide));
+                    }
                 }
             }
 
