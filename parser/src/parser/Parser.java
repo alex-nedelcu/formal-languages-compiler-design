@@ -189,11 +189,13 @@ public class Parser implements IParser {
                     // For each following symbol
                     if (indexOfSymbol < rightSide.getSymbols().size() - 1) {
                         for (int index = indexOfSymbol + 1; index < rightSide.getSymbols().size(); index++) {
-                            // FIRST(SYMBOL) = FIRST(SYMBOL) UNION FIRST(NEXT_SYMBOL)
                             String nextSymbol = rightSide.getSymbols().get(index);
+
+                            // FOLLOW(SYMBOL) = FOLLOW(SYMBOL) UNION ( FIRST(NEXT_SYMBOL) - EPSILON) )
                             Set<String> neighbourFirstValue = new HashSet<>(first.get(nextSymbol));
                             neighbourFirstValue.remove(EPSILON);
                             neighbourFirstValue.addAll(follow.get(symbol));
+
                             currentValue.addAll(neighbourFirstValue);
 
                             // STOP, if NEXT_SYMBOL is not nullable (i.e. its FIRST does not contain EPSILON)
