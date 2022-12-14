@@ -32,6 +32,10 @@ public class Parser implements IParser {
         Set<String> terminals = grammar.getTerminals();
         Set<Production> productions = new HashSet<>(grammar.getProductions());
 
+        for (String terminal : terminals) {
+            first.put(terminal, List.of(terminal));
+        }
+
         // initialize each non-terminal first with an empty list
         for (String nonTerminal : nonTerminals) {
             first.put(nonTerminal, new ArrayList<>());
@@ -57,80 +61,42 @@ public class Parser implements IParser {
     }
 
     private void computeFirst() {
-        Map<String, List<String>> currentFirst;
-        Map<String, List<String>> newFirst = new HashMap<>(first);
         Set<String> nonTerminals = grammar.getNonTerminals();
+        List<Production> productions = grammar.getProductions();
 
+        boolean added = false;
         do {
-            currentFirst = new HashMap<>(newFirst);
-
-            for (String source : currentFirst.keySet()) {
-                List<String> currentFirstBySource = new ArrayList<>(currentFirst.get(source));
-                boolean canCompute = true;
-                List<String> allNextNonTerminals = new ArrayList<>();
-                List<SymbolSequence> allTargets = grammar.getProductionsByNonTerminal(source)
-                    .stream()
-                    .map(production -> production.targets)
-                    .flatMap(List::stream)
-                    .toList();
-
-                for (SymbolSequence target : allTargets) {
-                    String firstSymbol = target.getSymbols().get(0);
-
-                    if (nonTerminals.contains(firstSymbol)) {
-                        allNextNonTerminals.add(firstSymbol);
+            added = false;
+            for (Production production : productions) {
+                for (SymbolSequence target : production.targets) {
+                    for (String symbol : target.getSymbols()) {
+                        var containsEpsilon = false;
+                        var temp = new HashSet<>(first.get(production.getUniqueSource()));
+                        ArrayList<String> addition;
+                        if (isEpsilon(symbol)) {
+                            addition = new ArrayList<>();
+                        } else {
+                            addition = new ArrayList<>(first.get(symbol));
+                            containsEpsilon = addition.contains(EPSILON);
+                            addition.remove(EPSILON);
+                        }
+                        if (!temp.containsAll(addition)) {
+                            added = true;
+                        }
+                        temp.addAll(addition);
+                        first.put(production.getUniqueSource(), temp.stream().toList());
+                        if (!containsEpsilon) {
+                            break;
+                        }
                     }
-                }
-
-
-                for (String nextNonTerminal : allNextNonTerminals) {
-                    List<String> currentFirstForNextNonTerminal = currentFirst.get(nextNonTerminal);
-
-                    if (currentFirstForNextNonTerminal == null) {
-                        canCompute = false;
+                    if (target.getSymbols().contains(EPSILON) || target.getSymbols().stream().allMatch(x -> (nonTerminals.contains(x) && first.get(x).contains(EPSILON)) || isEpsilon(x))) {
+                        var temp = new HashSet<>(first.get(production.getUniqueSource()));
+                        temp.add(EPSILON);
+                        first.put(production.getUniqueSource(), temp.stream().toList());
                     }
-                }
-
-                if (canCompute) {
-                    List<String> currentFirstForSource = new ArrayList<>(first.get(source));
-                    List<List<String>> allCurrentFirstsForNextNonTerminals = allNextNonTerminals
-                        .stream()
-                        .map(currentFirst::get)
-                        .toList();
-                    List<String> result;
-
-                    // concatenation of length 1 between all elements of allCurrentFirstsForNextNonTerminals
-                    int howMany = allCurrentFirstsForNextNonTerminals.size();
-
-                    if (howMany == 0) {
-                        continue;
-                    } else if (howMany == 1) {
-                        result = allCurrentFirstsForNextNonTerminals.get(0);
-                    } else if (howMany == 2) {
-                        result = concatenate(
-                            allCurrentFirstsForNextNonTerminals.get(0),
-                            allCurrentFirstsForNextNonTerminals.get(1)
-                        );
-                    } else {
-                        int index = 0;
-                        result = allCurrentFirstsForNextNonTerminals.get(index);
-
-                        do {
-                            index += 1;
-                            List<String> next = allCurrentFirstsForNextNonTerminals.get(index);
-                            result = concatenate(result, next);
-                        } while (index < howMany - 1);
-                    }
-
-                    List<String> newFirstBySource = new ArrayList<>(currentFirstBySource);
-                    newFirstBySource.addAll(result);
-                    newFirst.put(source, newFirstBySource.stream().distinct().collect(Collectors.toList()));
                 }
             }
-
-        } while (!areMapsEqual(newFirst, currentFirst));
-
-        first = newFirst;
+        } while (added);
     }
 
     private List<String> concatenate(List<String> first, List<String> second) {
@@ -178,13 +144,12 @@ public class Parser implements IParser {
     }
 
     private void computeFollow() {
-        Map<String, List<String>> current = new HashMap<>();
-        Set<String> terminals = grammar.getTerminals();
+        Map<String, List<String>> current = new HashMap<>(follow);
         Set<String> nonTerminals = grammar.getNonTerminals();
         List<Production> productions = grammar.getProductions();
 
         for (String symbol : nonTerminals) {
-            List<String> currentValue = follow.get(symbol);
+            Set<String> currentValue = new HashSet<>(follow.get(symbol));
             Set<Production> matchingProductions = getProductionsWithSymbol(new HashSet<>(productions), symbol);
 
             for (var production : matchingProductions) {
@@ -193,37 +158,32 @@ public class Parser implements IParser {
 
                 int indexOfSymbol = rightSide.getSymbols().indexOf(symbol);
                 if (indexOfSymbol < rightSide.getSymbols().size() - 1) {
-                    String valueAfterSymbol = rightSide.getSymbols().get(indexOfSymbol + 1);
-                    if (terminals.contains(valueAfterSymbol)) {
-                        currentValue.add(valueAfterSymbol);
-                    } else {
-                        List<String> neighbourFirstValue = first.getOrDefault(valueAfterSymbol, null);
-                        boolean foundEpsilon = false;
-
-                        if (neighbourFirstValue != null) {
-                            for (var value : neighbourFirstValue) {
-                                if (value.equals(EPSILON)) {
-                                    foundEpsilon = true;
-                                } else {
-                                    currentValue.add(value);
-                                }
-                            }
-                        }
-
-                        if (foundEpsilon) {
-                            currentValue.addAll(follow.get(leftSide));
+                    boolean isBroken = false;
+                    for (int index = indexOfSymbol + 1; index < rightSide.getSymbols().size(); index++) {
+                        String nextSymbol = rightSide.getSymbols().get(index);
+                        Set<String> neighbourFirstValue = new HashSet<>(first.get(nextSymbol));
+                        neighbourFirstValue.remove(EPSILON);
+                        neighbourFirstValue.addAll(follow.get(symbol));
+                        currentValue.addAll(neighbourFirstValue);
+                        if (!first.get(nextSymbol).contains(EPSILON)) {
+                            isBroken = true;
+                            break;
                         }
                     }
-                } else if (indexOfSymbol == rightSide.getSymbols().size() - 1) {
+                    if (!isBroken) {
+                        currentValue.addAll(follow.get(leftSide));
+                        currentValue.add(EPSILON);
+                    }
+                }
+                if (indexOfSymbol == rightSide.getSymbols().size() - 1) {
                     currentValue.addAll(follow.get(leftSide));
                 }
             }
 
-            current.put(symbol, currentValue);
+            follow.put(symbol, currentValue.stream().toList());
         }
 
         if (!areMapsEqual(follow, current)) {
-            follow = current;
             computeFollow();
         }
     }
@@ -274,11 +234,19 @@ public class Parser implements IParser {
 
     @Override
     public Map<String, List<String>> getFirst() {
-        return first;
+        Map<String, List<String>> temp = new HashMap<>();
+        for (var nonTerminal : grammar.getNonTerminals()) {
+            temp.put(nonTerminal, first.get(nonTerminal));
+        }
+        return temp;
     }
 
     @Override
     public Map<String, List<String>> getFollow() {
-        return follow;
+        Map<String, List<String>> temp = new HashMap<>();
+        for (var nonTerminal : grammar.getNonTerminals()) {
+            temp.put(nonTerminal, follow.get(nonTerminal));
+        }
+        return temp;
     }
 }
