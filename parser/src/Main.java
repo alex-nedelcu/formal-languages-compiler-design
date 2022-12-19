@@ -26,6 +26,7 @@ public final class Main {
             System.out.println("[5] Perform CFG check");
             System.out.println("[6] Get FIRST");
             System.out.println("[7] Get FOLLOW");
+            System.out.println("[8] Parse table");
             System.out.print("> ");
 
             String option = keyboard.nextLine().trim();
@@ -45,6 +46,7 @@ public final class Main {
                 case "5" -> System.out.println(grammar.isContextFree());
                 case "6" -> System.out.println(parser.getFirst());
                 case "7" -> System.out.println(parser.getFollow());
+                case "8" -> parser.parseTable();
 
                 default -> System.out.println("Invalid option!");
             }

@@ -10,4 +10,5 @@ public interface IParser {
 
     Map<String, List<String>> getFollow();
 
+    void parseTable();
 }

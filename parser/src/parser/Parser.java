@@ -183,7 +183,7 @@ public class Parser implements IParser {
                 }
 
                 // For each appearance of Symbol in the current Production
-                for(int indexOfSymbol : indexes){
+                for (int indexOfSymbol : indexes) {
                     boolean isBetaNullable = true;
 
                     // For each following symbol
@@ -235,6 +235,84 @@ public class Parser implements IParser {
 
     private boolean symbolBelongsToFirstOfKey(String symbol, String key) {
         return first != null && first.containsKey(key) && first.get(key).contains(symbol);
+    }
+
+    public void parseTable() {
+        var parseTable = new HashMap<String, HashMap<String, ArrayList<String>>>();
+        for (String nonTerminal : grammar.getNonTerminals()) {
+            var newEntry = new HashMap<String, ArrayList<String>>();
+            for (String terminal : grammar.getTerminals()) {
+                newEntry.put(terminal, new ArrayList<>());
+                parseTable.put(nonTerminal, newEntry);
+            }
+        }
+
+        int counter = 0;
+        for (int productionIndex = 0; productionIndex < grammar.getProductions().size(); productionIndex++) {
+            var production = grammar.getProductions().get(productionIndex);
+            for (int index = 0; index < production.targets.size(); index++) {
+                counter++;
+                var firstAlpha = new ArrayList<String>();
+                var rhs = production.targets.get(index);
+                boolean isNullable = true;
+                for (var symbol : rhs.getSymbols()) {
+                    System.out.println(symbol);
+
+                    ArrayList<String> symbolFirst;
+                    if (isEpsilon(symbol)) {
+                        symbolFirst = new ArrayList<>(List.of(EPSILON));
+                    } else {
+                        symbolFirst = new ArrayList<>(first.get(symbol));
+                    }
+                    boolean containsEpsilon = symbolFirst.contains(EPSILON);
+                    symbolFirst.remove(EPSILON);
+                    firstAlpha.addAll(symbolFirst);
+
+                    if (!containsEpsilon) {
+                        isNullable = false;
+                        break;
+                    }
+                }
+
+                for (var b : firstAlpha) {
+                    var parseTableA = parseTable.get(production.getUniqueSource());
+                    var parseTableAB = new HashSet<>(parseTableA.get(b));
+                    parseTableAB.add(String.valueOf(counter));
+                    parseTableA.put(b, new ArrayList<>(parseTableAB.stream().toList()));
+                }
+
+                if (isNullable || isEpsilon(rhs.getSymbols().toString())) {
+                    for (var c : follow.get(production.getUniqueSource())) {
+                        var parseTableA = parseTable.get(production.getUniqueSource());
+                        var parseTableAB = new HashSet<>(parseTableA.get(c));
+                        parseTableAB.add(String.valueOf(counter));
+                        parseTableA.put(c, new ArrayList<>(parseTableAB.stream().toList()));
+                    }
+                }
+            }
+        }
+
+        System.out.print("       ");
+        for (String terminal : grammar.getTerminals()) {
+            System.out.print(terminal);
+            System.out.print("     ");
+        }
+        System.out.println();
+        System.out.println("     ------------------------------------------------");
+        for (String nonTerminal : grammar.getNonTerminals()) {
+            System.out.print(nonTerminal);
+            System.out.print("   | ");
+            for (String terminal : grammar.getTerminals()) {
+                var temp = parseTable.get(nonTerminal).get(terminal);
+                if (temp.isEmpty()) {
+                    System.out.print(" X    ");
+                } else {
+                    System.out.print(temp);
+                    System.out.print("   ");
+                }
+            }
+            System.out.println();
+        }
     }
 
     private boolean isEpsilon(String symbol) {
