@@ -11,6 +11,7 @@ public class Production {
 
     public SymbolSequence sources;
     public List<SymbolSequence> targets;
+    public Integer index;
 
     public Production(String productionString) {
         List<String> productionTokens = ensureValidity(splitByArrow(productionString));
@@ -23,6 +24,14 @@ public class Production {
         this.sources = new SymbolSequence(source);
         this.targets = new ArrayList<>();
         this.targets.add(target);
+        this.index = -1;
+    }
+
+    public Production(String source, SymbolSequence target, Integer index) {
+        this.sources = new SymbolSequence(source);
+        this.targets = new ArrayList<>();
+        this.targets.add(target);
+        this.index = index;
     }
 
     private List<String> splitByArrow(String productionString) {
@@ -61,6 +70,11 @@ public class Production {
         return sources.getSymbols().get(0);
     }
 
+    public SymbolSequence getUniqueTargetForIndexedProduction() {
+        assert (targets.size() == 1);
+        return targets.get(0);
+    }
+
     public boolean hasUniqueSource() {
         return sources.getSymbols().size() == 1;
     }
@@ -68,8 +82,9 @@ public class Production {
     @Override
     public String toString() {
         return "Production{" +
-                "sources=" + sources +
-                ", targets=" + targets +
-                '}';
+            "sources=" + sources +
+            ", targets=" + targets +
+            ", index=" + index +
+            '}';
     }
 }

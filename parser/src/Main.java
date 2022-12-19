@@ -8,7 +8,7 @@ import java.util.Scanner;
 public final class Main {
     // LL(1)
     public static void main(String[] args) {
-        IGrammar grammar = new Grammar("/Users/alexandru.nedelcu.ext/Desktop/Other/Uni/FLCD/formal-languages-compiler-design/parser/src/data/g1.txt");
+        IGrammar grammar = new Grammar("/Users/alexandru.nedelcu.ext/Desktop/Other/Uni/FLCD/formal-languages-compiler-design/parser/src/data/g3.txt");
         grammar.process();
         IParser parser = new Parser(grammar);
 
@@ -46,7 +46,7 @@ public final class Main {
                 case "5" -> System.out.println(grammar.isContextFree());
                 case "6" -> System.out.println(parser.getFirst());
                 case "7" -> System.out.println(parser.getFollow());
-                case "8" -> parser.parseTable();
+                case "8" -> parser.printParseTable();
 
                 default -> System.out.println("Invalid option!");
             }

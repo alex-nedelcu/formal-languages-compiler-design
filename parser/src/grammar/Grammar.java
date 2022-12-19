@@ -117,6 +117,23 @@ public class Grammar implements IGrammar {
     }
 
     @Override
+    public List<Production> getIndexedProductions() {
+        List<Production> indexedProductions = new ArrayList<>();
+        int index = 1;
+
+        for (Production notIndexed : productions) {
+            for (SymbolSequence target : notIndexed.targets) {
+                String source = notIndexed.getUniqueSource();
+                indexedProductions.add(new Production(source, target, index));
+
+                index += 1;
+            }
+        }
+
+        return indexedProductions;
+    }
+
+    @Override
     public String getStartingSymbol() {
         return startingSymbol;
     }

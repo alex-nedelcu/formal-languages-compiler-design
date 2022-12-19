@@ -4,14 +4,27 @@ import grammar.IGrammar;
 import grammar.Production;
 import grammar.SymbolSequence;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 
 public class Parser implements IParser {
     private static final String EPSILON = "EPSILON";
+    private static final String EMPTY_STACK_MARK = "$";
+    private static final String ACC = "acc";
+    private static final String POP = "pop";
+    private static final String ERR = "err";
+
+
     private Map<String, List<String>> first;
     private Map<String, List<String>> follow;
+    private Map<String, Map<String, List<String>>> parseTable; // e.g. A: {b: [], +: []}
     private final IGrammar grammar;
 
     public Parser(IGrammar grammar) {
@@ -25,6 +38,9 @@ public class Parser implements IParser {
         this.follow = new HashMap<>();
         initializeFollow();
         computeFollow();
+
+        this.parseTable = new HashMap<>();
+        computeParseTable();
     }
 
     private void initializeFirst() {
@@ -102,9 +118,9 @@ public class Parser implements IParser {
                     }
 
                     boolean isNullable = target.getSymbols().stream()
-                            .allMatch(symbol -> (nonTerminals.contains(symbol) && first.get(symbol).contains(EPSILON))
-                                    || isEpsilon(symbol)
-                            );
+                        .allMatch(symbol -> (nonTerminals.contains(symbol) && first.get(symbol).contains(EPSILON))
+                            || isEpsilon(symbol)
+                        );
                     if (isNullable) {
                         var sourceFirst = new HashSet<>(first.get(production.getUniqueSource()));
                         sourceFirst.add(EPSILON);
@@ -113,34 +129,6 @@ public class Parser implements IParser {
                 }
             }
         } while (isModified);
-    }
-
-    private List<String> concatenate(List<String> first, List<String> second) {
-        List<String> result = new ArrayList<>();
-        if (first.isEmpty()) {
-            first = new ArrayList<>(Collections.singleton(EPSILON));
-        }
-        if (second.isEmpty()) {
-            second = new ArrayList<>(Collections.singleton(EPSILON));
-        }
-
-        for (String firstSymbol : first) {
-            for (String secondSymbol : second) {
-                String sequence;
-
-                if (isEpsilon(firstSymbol) && isEpsilon(secondSymbol)) {
-                    sequence = EPSILON;
-                } else if (!isEpsilon(firstSymbol)) {
-                    sequence = firstSymbol;
-                } else {
-                    sequence = secondSymbol;
-                }
-
-                result.add(sequence);
-            }
-        }
-
-        return result;
     }
 
     private void initializeFollow() {
@@ -237,83 +225,6 @@ public class Parser implements IParser {
         return first != null && first.containsKey(key) && first.get(key).contains(symbol);
     }
 
-    public void parseTable() {
-        var parseTable = new HashMap<String, HashMap<String, ArrayList<String>>>();
-        for (String nonTerminal : grammar.getNonTerminals()) {
-            var newEntry = new HashMap<String, ArrayList<String>>();
-            for (String terminal : grammar.getTerminals()) {
-                newEntry.put(terminal, new ArrayList<>());
-                parseTable.put(nonTerminal, newEntry);
-            }
-        }
-
-        int counter = 0;
-        for (int productionIndex = 0; productionIndex < grammar.getProductions().size(); productionIndex++) {
-            var production = grammar.getProductions().get(productionIndex);
-            for (int index = 0; index < production.targets.size(); index++) {
-                counter++;
-                var firstAlpha = new ArrayList<String>();
-                var rhs = production.targets.get(index);
-                boolean isNullable = true;
-                for (var symbol : rhs.getSymbols()) {
-                    System.out.println(symbol);
-
-                    ArrayList<String> symbolFirst;
-                    if (isEpsilon(symbol)) {
-                        symbolFirst = new ArrayList<>(List.of(EPSILON));
-                    } else {
-                        symbolFirst = new ArrayList<>(first.get(symbol));
-                    }
-                    boolean containsEpsilon = symbolFirst.contains(EPSILON);
-                    symbolFirst.remove(EPSILON);
-                    firstAlpha.addAll(symbolFirst);
-
-                    if (!containsEpsilon) {
-                        isNullable = false;
-                        break;
-                    }
-                }
-
-                for (var b : firstAlpha) {
-                    var parseTableA = parseTable.get(production.getUniqueSource());
-                    var parseTableAB = new HashSet<>(parseTableA.get(b));
-                    parseTableAB.add(String.valueOf(counter));
-                    parseTableA.put(b, new ArrayList<>(parseTableAB.stream().toList()));
-                }
-
-                if (isNullable || isEpsilon(rhs.getSymbols().toString())) {
-                    for (var c : follow.get(production.getUniqueSource())) {
-                        var parseTableA = parseTable.get(production.getUniqueSource());
-                        var parseTableAB = new HashSet<>(parseTableA.get(c));
-                        parseTableAB.add(String.valueOf(counter));
-                        parseTableA.put(c, new ArrayList<>(parseTableAB.stream().toList()));
-                    }
-                }
-            }
-        }
-
-        System.out.print("       ");
-        for (String terminal : grammar.getTerminals()) {
-            System.out.print(terminal);
-            System.out.print("     ");
-        }
-        System.out.println();
-        System.out.println("     ------------------------------------------------");
-        for (String nonTerminal : grammar.getNonTerminals()) {
-            System.out.print(nonTerminal);
-            System.out.print("   | ");
-            for (String terminal : grammar.getTerminals()) {
-                var temp = parseTable.get(nonTerminal).get(terminal);
-                if (temp.isEmpty()) {
-                    System.out.print(" X    ");
-                } else {
-                    System.out.print(temp);
-                    System.out.print("   ");
-                }
-            }
-            System.out.println();
-        }
-    }
 
     private boolean isEpsilon(String symbol) {
         return symbol != null && symbol.trim().equalsIgnoreCase(EPSILON);
@@ -359,5 +270,191 @@ public class Parser implements IParser {
             temp.put(nonTerminal, follow.get(nonTerminal));
         }
         return temp;
+    }
+
+    private void computeParseTable() {
+        Set<String> terminals = grammar.getTerminals();
+        Set<String> nonTerminals = grammar.getNonTerminals();
+        Set<String> rowKeys = extractRowKeysFromGrammar(grammar);
+        Set<String> columnKeys = extractColumnKeysFromGrammar(grammar);
+
+        for (String rowKey : rowKeys) {
+            for (String columnKey : columnKeys) {
+                boolean set = false;
+                Map<String, List<String>> previousMapping = parseTable.get(rowKey);
+                List<Production> indexedProductions = grammar.getIndexedProductions();
+                List<Production> indexedProductionBySource = indexedProductions
+                    .stream()
+                    .filter(production -> production.getUniqueSource().equals(rowKey))
+                    .toList();
+
+                // parseTable(A, a) = (alpha, i), if
+                // A = non-terminal, a = terminal, a != EPSILON, A -> alpha production , a belongs to FIRST(alpha)
+                if (nonTerminals.contains(rowKey) && terminals.contains(columnKey) && !columnKey.equals(EPSILON)) {
+                    for (Production production : indexedProductionBySource) {
+                        // alpha
+                        SymbolSequence target = production.getUniqueTargetForIndexedProduction();
+
+                        // FIRST(alpha)
+                        List<String> targetSequenceFirst = computeFirstForSequence(target);
+
+                        // a belongs to FIRST(alpha)
+                        if (targetSequenceFirst.contains(columnKey)) {
+                            String action = production.index.toString();
+                            Map<String, List<String>> updatedMapping = addActionToMapping(previousMapping, columnKey, action);
+                            parseTable.put(rowKey, updatedMapping);
+                            set = true;
+                        }
+                    }
+                }
+
+                // parseTable(A, b) = (alpha, i), if
+                // A = non-terminal, A -> alpha production, EPSILON belongs to FIRST(alpha), b belongs to FOLLOW(A)
+                if (nonTerminals.contains(rowKey) && follow.get(rowKey).contains(columnKey)) {
+                    for (Production production : indexedProductionBySource) {
+                        // alpha
+                        SymbolSequence target = production.getUniqueTargetForIndexedProduction();
+
+                        // FIRST(alpha)
+                        List<String> targetSequenceFirst = computeFirstForSequence(target);
+
+                        // EPSILON belongs to FIRST(alpha)
+                        if (targetSequenceFirst.contains(EPSILON)) {
+                            String action = production.index.toString();
+                            Map<String, List<String>> updatedMapping = addActionToMapping(previousMapping, columnKey, action);
+                            parseTable.put(rowKey, updatedMapping);
+                            set = true;
+                        }
+                    }
+                }
+
+
+                // parseTable(a, a) = pop, if a = terminal
+                if (rowKey.equals(columnKey) && terminals.contains(rowKey)) {
+                    Map<String, List<String>> updatedMapping = addActionToMapping(previousMapping, columnKey, POP);
+                    parseTable.put(rowKey, updatedMapping);
+                    set = true;
+                }
+
+                // parseTable($, $) = acc
+                if (rowKey.equals(EMPTY_STACK_MARK) && columnKey.equals(EMPTY_STACK_MARK)) {
+                    Map<String, List<String>> updatedMapping = addActionToMapping(previousMapping, columnKey, ACC);
+                    parseTable.put(rowKey, updatedMapping);
+                    set = true;
+                }
+
+                // default
+                if (!set) {
+                    Map<String, List<String>> updatedMapping = addActionToMapping(previousMapping, columnKey, ERR);
+                    parseTable.put(rowKey, updatedMapping);
+                }
+            }
+        }
+    }
+
+    private List<String> computeFirstForSequence(SymbolSequence symbols) {
+        String symbolOnFirstPosition = symbols.getSymbols().get(0);
+        List<String> sequenceFirst = first.get(symbolOnFirstPosition);
+
+        if (isEpsilon(symbolOnFirstPosition)) {
+            sequenceFirst = new ArrayList<>(List.of(EPSILON));
+        }
+
+        for (int index = 1; index < symbols.getSymbols().size(); index += 1) {
+            String currentSymbol = symbols.getSymbols().get(index);
+            List<String> currentSymbolFirst = first.get(currentSymbol);
+
+            sequenceFirst = concatenate(sequenceFirst, currentSymbolFirst);
+        }
+
+        return sequenceFirst;
+    }
+
+    private Map<String, List<String>> addActionToMapping(Map<String, List<String>> mapping, String columnKey, String action) {
+        // if mapping is null creates and returns a new mapping {columnKey: [action]}
+        // else it merges current mapping with {columnKey: [action]}
+        Map<String, List<String>> newMapping = mapping;
+        List<String> actionList = new ArrayList<>(List.of(action));
+
+        if (newMapping == null) {
+            newMapping = new HashMap<>();
+        }
+
+        newMapping.put(columnKey, actionList);
+
+        return newMapping;
+    }
+
+    Set<String> extractRowKeysFromGrammar(IGrammar grammar) {
+        Set<String> rowKeys = new HashSet<>();
+        rowKeys.addAll(grammar.getNonTerminals());
+        rowKeys.addAll(grammar.getTerminals());
+        rowKeys.add(EMPTY_STACK_MARK);
+
+        return rowKeys;
+    }
+
+    private Set<String> extractColumnKeysFromGrammar(IGrammar grammar) {
+        Set<String> columnKeys = new HashSet<>();
+        columnKeys.addAll(grammar.getTerminals());
+        columnKeys.add(EMPTY_STACK_MARK);
+
+        return columnKeys;
+    }
+
+    private List<String> concatenate(List<String> first, List<String> second) {
+        List<String> result = new ArrayList<>();
+
+        if (first.isEmpty()) {
+            first = new ArrayList<>(Collections.singleton(EPSILON));
+        }
+        if (second.isEmpty()) {
+            second = new ArrayList<>(Collections.singleton(EPSILON));
+        }
+
+        for (String firstSymbol : first) {
+            for (String secondSymbol : second) {
+                String sequence;
+
+                if (isEpsilon(firstSymbol) && isEpsilon(secondSymbol)) {
+                    sequence = EPSILON;
+                } else if (!isEpsilon(firstSymbol)) {
+                    sequence = firstSymbol;
+                } else {
+                    sequence = secondSymbol;
+                }
+
+                result.add(sequence);
+            }
+        }
+
+        return result;
+    }
+
+    @Override
+    public void printParseTable() {
+        String tenWhitespaces = "          ";
+
+        Set<String> columnKeys = extractColumnKeysFromGrammar(grammar);
+        Set<String> rowKeys = extractRowKeysFromGrammar(grammar);
+
+        for (String columnKey : columnKeys) {
+            System.out.print(tenWhitespaces + columnKey);
+        }
+
+        System.out.println();
+
+        for (String rowKey : rowKeys) {
+            if (grammar.getNonTerminals().contains(rowKey)) {
+                System.out.print(rowKey);
+
+                for (String columnKey : columnKeys) {
+                    List<String> actions = parseTable.get(rowKey).get(columnKey);
+                    System.out.printf("%10s ", actions);
+                }
+
+                System.out.println();
+            }
+        }
     }
 }

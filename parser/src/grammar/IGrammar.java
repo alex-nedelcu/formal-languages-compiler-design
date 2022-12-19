@@ -13,6 +13,8 @@ public interface IGrammar {
 
     List<Production> getProductions();
 
+    List<Production> getIndexedProductions();
+
     List<Production> getProductionsByNonTerminal(String nonTerminal);
 
     String getStartingSymbol();
