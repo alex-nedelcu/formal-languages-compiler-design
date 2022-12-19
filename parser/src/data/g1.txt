@@ -1,0 +1,4 @@
+NON-TERMINALS : S A B C D E F
+TERMINALS : a b c d e f
+START : S
+PRODUCTIONS : S -> A.B.A ~ A -> C.D | a ~ B -> E.F | b ~ C -> c | EPSILON ~ D -> d ~ E -> e.E | EPSILON ~ F -> f.F | EPSILON
