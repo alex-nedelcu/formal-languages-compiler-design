@@ -374,13 +374,22 @@ public class Parser implements IParser {
         // if mapping is null creates and returns a new mapping {columnKey: [action]}
         // else it merges current mapping with {columnKey: [action]}
         Map<String, List<String>> newMapping = mapping;
-        List<String> actionList = new ArrayList<>(List.of(action));
+        List<String> newActionList = new ArrayList<>(List.of(action));
 
         if (newMapping == null) {
             newMapping = new HashMap<>();
         }
 
-        newMapping.put(columnKey, actionList);
+        List<String> previousActionList = newMapping.get(columnKey);
+        if (previousActionList != null) {
+            newActionList.addAll(previousActionList);
+        }
+
+        if (newActionList.size() > 1) {
+            System.out.println("CONFLICT for symbol " + columnKey + " with action " + action);
+        }
+
+        newMapping.put(columnKey, newActionList);
 
         return newMapping;
     }
