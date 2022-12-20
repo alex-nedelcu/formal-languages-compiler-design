@@ -12,4 +12,6 @@ public interface IParser {
   void printParseTable();
 
   List<String> getDerivationsStringForSequence(String sequence);
+
+  ParserOutput getParserOutput();
 }

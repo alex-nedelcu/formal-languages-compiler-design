@@ -26,6 +26,12 @@ public class Parser implements IParser {
   private Map<String, List<String>> first;
   private Map<String, List<String>> follow;
   private Map<String, Map<String, List<String>>> parseTable; // e.g. A: {b: [], +: []}
+  private ParserOutput parserOutput;
+
+  @Override
+  public ParserOutput getParserOutput() {
+    return parserOutput;
+  }
 
   public Parser(IGrammar grammar) {
     this.grammar = grammar;
@@ -467,6 +473,7 @@ public class Parser implements IParser {
 
   @Override
   public List<String> getDerivationsStringForSequence(String sequence) {
+    ParserOutput output = new ParserOutput();
     boolean accepted = false;
     List<Production> indexedProductions = grammar.getIndexedProductions();
 
@@ -488,23 +495,20 @@ public class Parser implements IParser {
     boolean go = true;
 
     while (go) {
-//      System.out.println();
-//      System.out.println("input stack: " + inputStack);
-//      System.out.println("working stack: " + workingStack);
-//      System.out.println("output band: " + outputBand);
+      output.inputStackStates.add((Stack<String>) inputStack.clone());
+      output.workingStackStates.add((Stack<String>) workingStack.clone());
+      output.outputBandStates.add(new ArrayList<>(outputBand));
 
       String workingStackTop = workingStack.peek();
       String inputStackTop = inputStack.peek();
 
-//      System.out.println("input stack top: " + inputStackTop);
-//      System.out.println("working stack top: " + workingStackTop);
+      output.stackTopsStates.add(List.of(workingStackTop, inputStackTop));
 
       List<String> action = parseTable.get(workingStackTop).get(inputStackTop);
-//      System.out.println("Action: " + action);
 
       // Action Push
       if (isProductionIndex(action)) {
-//        System.out.println("Action Push");
+        output.actions.add("push");
 
         Integer index = Integer.valueOf(action.get(0));
         Production productionWithIndex = indexedProductions
@@ -530,7 +534,7 @@ public class Parser implements IParser {
       } else {
         // Action Pop
         if (isPop(action)) {
-//          System.out.println("Action Pop");
+          output.actions.add("pop");
 
           // Pop top of input stack
           inputStack.pop();
@@ -539,7 +543,7 @@ public class Parser implements IParser {
           workingStack.pop();
         } else {
           if (isAcc(action)) {
-//            System.out.println("Acc");
+            output.actions.add("acc");
             accepted = true;
           }
 
@@ -555,9 +559,11 @@ public class Parser implements IParser {
     }
 
     if (!accepted) {
+      output.actions.add("err");
       outputBand = new ArrayList<>(List.of(ERR));
     }
 
+    parserOutput = output;
     return outputBand;
   }
 

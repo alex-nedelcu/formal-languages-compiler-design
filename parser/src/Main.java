@@ -53,6 +53,13 @@ public final class Main {
           String sequence = keyboard.nextLine().trim();
 
           System.out.println(parser.getDerivationsStringForSequence(sequence));
+
+          System.out.println("Print parser output? (y/n) ");
+          String answer = keyboard.nextLine().trim();
+
+          if ("y".equals(answer)) {
+            System.out.println(parser.getParserOutput());
+          }
         }
 
         default -> System.out.println("Invalid option!");

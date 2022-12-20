@@ -56,16 +56,6 @@ class ParserTest {
   }
 
   @Test
-  void testFirstForEmptyGrammar() {
-    parser = new Parser(emptyGrammar);
-    Map<String, List<String>> first = parser.getFirst();
-
-    assertTrue(first.get("S").isEmpty());
-    assertTrue(first.get("A").isEmpty());
-    assertTrue(first.get("B").isEmpty());
-  }
-
-  @Test
   void testFollowForNonEmptyGrammar() {
     parser = new Parser(nonEmptyGrammar);
     Map<String, List<String>> follow = parser.getFollow();
