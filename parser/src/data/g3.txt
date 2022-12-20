@@ -1,4 +1,4 @@
-NON-TERMINALS : S A B C D
-TERMINALS : a + * ( )
+NON-TERMINALS : S A
+TERMINALS : a b c
 START : S
-PRODUCTIONS : S -> B.A ~ A -> +.B.A ~ A -> C ~ B -> D.C ~ C -> *.D.C ~ C -> EPSILON ~ D -> (.S.) ~ D -> a
+PRODUCTIONS : S -> a.A ~ A -> b.A ~ A -> c

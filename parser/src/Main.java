@@ -57,6 +57,7 @@ public final class Main {
         case "7" -> System.out.println(parser.getFollow());
         case "8" -> parser.printParseTable();
         case "9" -> {
+          // accepted sequence: abbc, should output 1223 (see Seminar 9 notes)
           System.out.println("Sequence: ");
           String sequence = keyboard.nextLine().trim();
 

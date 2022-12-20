@@ -1,0 +1,8 @@
+ParserOutput
+{
+  inputStackStates=[[$, c, b, b, a], [$, c, b, b, a], [$, c, b, b], [$, c, b, b], [$, c, b], [$, c, b], [$, c], [$, c], [$]]
+  workingStackStates=[[$, S], [$, A, a], [$, A], [$, A, b], [$, A], [$, A, b], [$, A], [$, c], [$]]
+  outputBandStates=[[], [1], [1], [1, 2], [1, 2], [1, 2, 2], [1, 2, 2], [1, 2, 2, 3], [1, 2, 2, 3]]
+  stackTopsStates=[[S, a], [a, a], [A, b], [b, b], [A, b], [b, b], [A, c], [c, c], [$, $]]
+  actions=[push, pop, push, pop, push, pop, push, pop, acc]
+}

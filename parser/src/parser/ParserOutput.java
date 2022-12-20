@@ -23,11 +23,11 @@ public class ParserOutput {
   @Override
   public String toString() {
     return "ParserOutput" + "\n" + "{" + "\n" +
-        "\tinputStackStates=" + inputStackStates + "\n" +
-        "\tworkingStackStates=" + workingStackStates + "\n" +
-        "\toutputBandStates=" + outputBandStates + "\n" +
-        "\tstackTopsStates=" + stackTopsStates + "\n" +
-        "\tactions=" + actions + "\n" +
+        "  inputStackStates=" + inputStackStates + "\n" +
+        "  workingStackStates=" + workingStackStates + "\n" +
+        "  outputBandStates=" + outputBandStates + "\n" +
+        "  stackTopsStates=" + stackTopsStates + "\n" +
+        "  actions=" + actions + "\n" +
         '}';
   }
 }
