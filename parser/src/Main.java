@@ -1,5 +1,8 @@
 import grammar.Grammar;
 import grammar.IGrammar;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.Scanner;
 import parser.IParser;
 import parser.Parser;
@@ -7,8 +10,13 @@ import parser.Parser;
 public final class Main {
 
   // LL(1)
-  public static void main(String[] args) {
-    IGrammar grammar = new Grammar("/Users/alexandru.nedelcu.ext/Desktop/Other/Uni/FLCD/formal-languages-compiler-design/parser/src/data/g1.txt");
+  public static void main(String[] args) throws IOException {
+    String DATA_BASE_PATH = "/Users/alexandru.nedelcu.ext/Desktop/Other/Uni/FLCD/formal-languages-compiler-design/parser/src/data";
+    String GRAMMAR = "1";
+    String GRAMMAR_FILE = DATA_BASE_PATH + "/g" + GRAMMAR + ".txt";
+    String OUTPUT_FILE = DATA_BASE_PATH + "/out" + GRAMMAR + ".txt";
+
+    IGrammar grammar = new Grammar(GRAMMAR_FILE);
     grammar.process();
     IParser parser = new Parser(grammar);
 
@@ -54,11 +62,20 @@ public final class Main {
 
           System.out.println(parser.getDerivationsStringForSequence(sequence));
 
-          System.out.println("Print parser output? (y/n) ");
+          System.out.println("\nPrint parser output? (y/n) ");
           String answer = keyboard.nextLine().trim();
 
           if ("y".equals(answer)) {
             System.out.println(parser.getParserOutput());
+          }
+
+          File outputFile = new File(OUTPUT_FILE);
+          outputFile.createNewFile();
+
+          try (FileWriter writer = new FileWriter(OUTPUT_FILE)) {
+            writer.write(parser.getParserOutput().toString());
+          } catch (IOException ioException) {
+            System.out.println("Error while writing to file: " + ioException.getMessage());
           }
         }
 
