@@ -12,7 +12,7 @@ public final class Main {
   // LL(1)
   public static void main(String[] args) throws IOException {
     String DATA_BASE_PATH = "/Users/alexandru.nedelcu.ext/Desktop/Other/Uni/FLCD/formal-languages-compiler-design/parser/src/data";
-    String GRAMMAR = "1";
+    String GRAMMAR = "3";
     String GRAMMAR_FILE = DATA_BASE_PATH + "/g" + GRAMMAR + ".txt";
     String OUTPUT_FILE = DATA_BASE_PATH + "/out" + GRAMMAR + ".txt";
 

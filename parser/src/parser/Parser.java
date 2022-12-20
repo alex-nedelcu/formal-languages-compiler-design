@@ -27,11 +27,7 @@ public class Parser implements IParser {
   private Map<String, List<String>> follow;
   private Map<String, Map<String, List<String>>> parseTable; // e.g. A: {b: [], +: []}
   private ParserOutput parserOutput;
-
-  @Override
-  public ParserOutput getParserOutput() {
-    return parserOutput;
-  }
+  private List<String> parseTableConflicts;
 
   public Parser(IGrammar grammar) {
     this.grammar = grammar;
@@ -46,7 +42,13 @@ public class Parser implements IParser {
     computeFollow();
 
     this.parseTable = new HashMap<>();
+    this.parseTableConflicts = new ArrayList<>();
     computeParseTable();
+  }
+
+  @Override
+  public ParserOutput getParserOutput() {
+    return parserOutput;
   }
 
   private void initializeFirst() {
@@ -306,7 +308,7 @@ public class Parser implements IParser {
             // a belongs to FIRST(alpha)
             if (targetSequenceFirst.contains(columnKey)) {
               String action = production.index.toString();
-              Map<String, List<String>> updatedMapping = addActionToMapping(previousMapping, columnKey, action);
+              Map<String, List<String>> updatedMapping = addActionToMapping(previousMapping, columnKey, rowKey, action);
               parseTable.put(rowKey, updatedMapping);
               set = true;
             }
@@ -326,7 +328,7 @@ public class Parser implements IParser {
             // EPSILON belongs to FIRST(alpha)
             if (targetSequenceFirst.contains(EPSILON)) {
               String action = production.index.toString();
-              Map<String, List<String>> updatedMapping = addActionToMapping(previousMapping, columnKey, action);
+              Map<String, List<String>> updatedMapping = addActionToMapping(previousMapping, columnKey, rowKey, action);
               parseTable.put(rowKey, updatedMapping);
               set = true;
             }
@@ -335,21 +337,21 @@ public class Parser implements IParser {
 
         // parseTable(a, a) = pop, if a = terminal
         if (rowKey.equals(columnKey) && terminals.contains(rowKey)) {
-          Map<String, List<String>> updatedMapping = addActionToMapping(previousMapping, columnKey, POP);
+          Map<String, List<String>> updatedMapping = addActionToMapping(previousMapping, columnKey, rowKey, POP);
           parseTable.put(rowKey, updatedMapping);
           set = true;
         }
 
         // parseTable($, $) = acc
         if (rowKey.equals(EMPTY_STACK_MARK) && columnKey.equals(EMPTY_STACK_MARK)) {
-          Map<String, List<String>> updatedMapping = addActionToMapping(previousMapping, columnKey, ACC);
+          Map<String, List<String>> updatedMapping = addActionToMapping(previousMapping, columnKey, rowKey, ACC);
           parseTable.put(rowKey, updatedMapping);
           set = true;
         }
 
         // default
         if (!set) {
-          Map<String, List<String>> updatedMapping = addActionToMapping(previousMapping, columnKey, ERR);
+          Map<String, List<String>> updatedMapping = addActionToMapping(previousMapping, columnKey, rowKey, ERR);
           parseTable.put(rowKey, updatedMapping);
         }
       }
@@ -374,7 +376,7 @@ public class Parser implements IParser {
     return sequenceFirst;
   }
 
-  private Map<String, List<String>> addActionToMapping(Map<String, List<String>> mapping, String columnKey, String action) {
+  private Map<String, List<String>> addActionToMapping(Map<String, List<String>> mapping, String columnKey, String rowKey, String action) {
     // if mapping is null creates and returns a new mapping {columnKey: [action]}
     // else it merges current mapping with {columnKey: [action]}
     Map<String, List<String>> newMapping = mapping;
@@ -390,7 +392,7 @@ public class Parser implements IParser {
     }
 
     if (newActionList.size() > 1) {
-      System.out.println("CONFLICT for symbol " + columnKey + " with action " + action);
+      parseTableConflicts.add("Conflict (columnKey=" + columnKey + ", rowKey=" + rowKey + ", actions=" + newActionList + ")");
     }
 
     newMapping.put(columnKey, newActionList);
@@ -446,6 +448,10 @@ public class Parser implements IParser {
 
   @Override
   public void printParseTable() {
+    System.out.println("CONFLICTS");
+    parseTableConflicts.forEach(System.out::println);
+    System.out.println();
+
     String tenWhitespaces = "          ";
 
     Set<String> columnKeys = extractColumnKeysFromGrammar(grammar);
