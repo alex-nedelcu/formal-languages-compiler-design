@@ -5,27 +5,27 @@ import java.util.Set;
 
 public interface IFiniteAutomata {
 
-    void setStates(Set<String> states);
+  void setStates(Set<String> states);
 
-    void setAlphabet(Set<String> alphabet);
+  void setAlphabet(Set<String> alphabet);
 
-    void setFinalStates(Set<String> finalStates);
+  void setFinalStates(Set<String> finalStates);
 
-    void setInitialState(String initialState);
+  void setInitialState(String initialState);
 
-    void setTransitions(List<Transition> transitions);
+  void setTransitions(List<Transition> transitions);
 
-    Set<String> getStates();
+  Set<String> getStates();
 
-    Set<String> getAlphabet();
+  Set<String> getAlphabet();
 
-    Set<String> getFinalStates();
+  Set<String> getFinalStates();
 
-    String getInitialState();
+  String getInitialState();
 
-    List<Transition> getTransitions();
+  List<Transition> getTransitions();
 
-    boolean validateSequence(String sequence);
+  boolean validateSequence(String sequence);
 
-    boolean validateSelf();
+  boolean validateSelf();
 }
