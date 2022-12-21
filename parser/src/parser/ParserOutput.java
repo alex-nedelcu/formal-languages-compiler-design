@@ -22,12 +22,12 @@ public class ParserOutput {
 
   @Override
   public String toString() {
-    return "ParserOutput" + "\n" + "{" + "\n" +
+    return "\nParserOutput" + "\n" + "{" + "\n" +
         "  inputStackStates=" + inputStackStates + "\n" +
         "  workingStackStates=" + workingStackStates + "\n" +
         "  outputBandStates=" + outputBandStates + "\n" +
         "  stackTopsStates=" + stackTopsStates + "\n" +
         "  actions=" + actions + "\n" +
-        '}';
+        "}\n";
   }
 }

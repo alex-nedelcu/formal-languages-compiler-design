@@ -1,6 +1,8 @@
 import grammar.Grammar;
 import grammar.IGrammar;
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Scanner;
@@ -58,8 +60,9 @@ public final class Main {
         case "8" -> parser.printParseTable();
         case "9" -> {
           // accepted sequence: abbc, should output 1223 (see Seminar 9 notes)
-          System.out.println("Sequence: ");
-          String sequence = keyboard.nextLine().trim();
+          File sequenceFile = new File(DATA_BASE_PATH + "/seq.txt");
+          BufferedReader bufferedReader = new BufferedReader(new FileReader(sequenceFile));
+          String sequence = bufferedReader.readLine().trim();
 
           System.out.println(parser.getDerivationsStringForSequence(sequence));
 
@@ -79,10 +82,10 @@ public final class Main {
             System.out.println("Error while writing to file: " + ioException.getMessage());
           }
         }
-
         default -> System.out.println("Invalid option!");
       }
-      System.out.println();
     }
+    System.out.println();
   }
 }
+

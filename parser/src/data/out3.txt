@@ -1,3 +1,4 @@
+
 ParserOutput
 {
   inputStackStates=[[$, c, b, b, a], [$, c, b, b, a], [$, c, b, b], [$, c, b, b], [$, c, b], [$, c, b], [$, c], [$, c], [$]]

@@ -448,9 +448,11 @@ public class Parser implements IParser {
 
   @Override
   public void printParseTable() {
-    System.out.println("CONFLICTS");
-    parseTableConflicts.forEach(System.out::println);
-    System.out.println();
+    if (!parseTableConflicts.isEmpty()) {
+      System.out.println("CONFLICTS");
+      parseTableConflicts.forEach(System.out::println);
+      System.out.println();
+    }
 
     String tenWhitespaces = "          ";
 
@@ -471,10 +473,11 @@ public class Parser implements IParser {
           List<String> actions = parseTable.get(rowKey).get(columnKey);
           System.out.printf("%10s ", actions);
         }
-
         System.out.println();
       }
     }
+
+    System.out.println();
   }
 
   @Override
