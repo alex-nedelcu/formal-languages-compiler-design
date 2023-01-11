@@ -5,18 +5,19 @@ import java.util.Set;
 
 public interface IGrammar {
 
-    void process();
+  void process();
 
-    Set<String> getNonTerminals();
+  Set<String> getNonTerminals();
 
-    Set<String> getTerminals();
+  Set<String> getTerminals();
 
-    List<Production> getProductions();
+  List<Production> getProductions();
 
-    List<Production> getProductionsByNonTerminal(String nonTerminal);
+  List<Production> getIndexedProductions();
 
-    String getStartingSymbol();
+  List<Production> getProductionsByNonTerminal(String nonTerminal);
 
-    boolean isContextFree();
+  String getStartingSymbol();
 
+  boolean isContextFree();
 }

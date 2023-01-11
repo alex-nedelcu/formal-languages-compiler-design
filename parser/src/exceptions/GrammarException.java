@@ -1,8 +1,8 @@
 package exceptions;
 
-public class GrammarException extends RuntimeException{
+public class GrammarException extends RuntimeException {
 
-    public GrammarException(String message) {
-        super(message);
-    }
+  public GrammarException(String message) {
+    super(message);
+  }
 }
