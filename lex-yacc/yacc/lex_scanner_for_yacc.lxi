@@ -1,0 +1,68 @@
+%option noyywrap
+
+%{
+  #include <stdio.h>
+  #include <string.h>
+  #include "y.tab.h"
+%}
+
+/* Regex definitions */
+IDENTIFIER [a-z][a-zA-Z0-9]*
+NON_ZERO_DIGIT [1-9]
+DIGIT [0-9]
+INTEGER_CONST (#0#|[PN]#[1-9][0-9]*#)
+BOOL_CONST (TRUE|FALSE)
+STRING_CONST \"[a-zA-Z0-9_]*\"
+BLANK [ \t\n]+
+
+/* Rules - pattern to be matched and corresponding action to be executed */
+%%
+"START" { return START; }
+"END" { return END; }
+"define" { return DEFINE; }
+"integer" { return INTEGER_TYPE; }
+"string" { return STRING_TYPE; }
+"bool" { return BOOL_TYPE; }
+"read" { return READ; }
+"display" { return DISPLAY; }
+"if" { return IF; }
+"else" { return ELSE; }
+"stop" { return STOP; }
+"loop" { return LOOP; }
+"iterator" { return ITERATOR; }
+"from" { return FROM; }
+"step" { return STEP; }
+"until" { return UNTIL; }
+
+"(" { return OPEN_ROUND_BRACKET; }
+")" { return CLOSED_ROUND_BRACKET; }
+"[" { return OPEN_SQUARE_BRACKET; }
+"]" { return CLOSED_SQUARE_BRACKET; }
+"{" { return OPEN_CURLY_BRACKET; }
+"}" { return CLOSED_CURLY_BRACKET; }
+"," { return COMMA; }
+";" { return SEMICOLON; }
+
+"+" { return PLUS; }
+"-" { return MINUS; }
+"/" { return DIVIDE; }
+"*" { return MULTIPLY; }
+"=" { return ASSIGN; }
+"==" { return EQUALS; }
+"!=" { return DOES_NOT_EQUAL; }
+">" { return GREATER; }
+">=" { return GREATER_OR_EQUAL; }
+"<" { return LESS; }
+"<=" { return LESS_OR_EQUAL; }
+"%" { return PERCENT; }
+
+{IDENTIFIER} { return IDENTIFIER; }
+{INTEGER_CONST} { return INTEGER_CONST; }
+{BOOL_CONST} { return BOOL_CONST; }
+{STRING_CONST} { return STRING_CONST; }
+{NON_ZERO_DIGIT} { return NON_ZERO_DIGIT; }
+{DIGIT} { return DIGIT; }
+
+{BLANK} { }
+. { printf("Lexical error: could not classify token %s\n", yytext); exit(1); }
+%%

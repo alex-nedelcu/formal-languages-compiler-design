@@ -1,0 +1,15 @@
+### Usage
+
+```
+# assume yacc_scanner.y to be the yacc file
+yacc -d -v yacc_scanner.y
+
+# assume lex_scanner_for_yacc.lxi to be the lex file
+lex lex_scanner_for_yacc.lxi
+
+# y.tab.c and lex.yy.c are generated from the previous commands
+gcc -o scanner.exe lex.yy.c y.tab.c
+
+# scanner.exe file should be generated
+./scanner.exe <file_to_be_parsed>
+```

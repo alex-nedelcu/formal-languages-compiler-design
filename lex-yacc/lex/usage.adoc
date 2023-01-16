@@ -1,0 +1,12 @@
+### Usage
+
+```
+# assume scanner.lxi to be the lex file
+lex scanner.lxi
+
+# lex.yy.c file should be generated
+gcc -o scanner.exe lex.yy.c -ll  # or -lf if using flex
+
+# scanner.exe file should be generated
+./scanner.exe <file_to_be_parsed>
+```
