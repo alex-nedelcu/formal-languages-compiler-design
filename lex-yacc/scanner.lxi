@@ -1,0 +1,135 @@
+%option noyywrap
+
+%{
+  #include <stdlib.h>
+  #include <string.h>
+  #include <math.h>
+
+  struct Pair {
+      char token[256];
+      int position;
+  };
+
+  /* Constants */
+  int DEFAULT_POSITION = -1;
+  int NOT_FOUND = -2;
+  int IDENTIFIER_TYPE = 1;
+  int CONST_TYPE = 2;
+
+  /* Data structures */
+  int pif_size = 0;
+  int symbol_table_size = 0;
+
+  struct Pair pif[128];
+  struct Pair symbol_table[128];
+
+  struct Pair create_pair(char* token, int position) {
+    struct Pair pair;
+    strcpy(pair.token, token);
+    pair.position = position;
+
+    return pair;
+  }
+
+   void add_to_pif_with_position(char* token, int position) {
+    struct Pair pair = create_pair(token, position);
+    pif[pif_size] = pair;
+    pif_size += 1;
+  }
+
+  void add_to_pif_no_position(char* token) {
+    add_to_pif_with_position(token, DEFAULT_POSITION);
+  }
+
+  int search_in_symbol_table(char* token) {
+    int position = NOT_FOUND;
+    int found = 0;
+    int i = 0;
+
+    while (found == 0 && i < symbol_table_size) {
+      char* symbol_table_token = symbol_table[i].token;
+      found = strcmp(symbol_table_token, token) == 0;
+
+      if (found) {
+        position = i;
+      }
+
+      i += 1;
+    }
+
+    return position;
+  }
+
+  int add_to_symbol_table(char* token) {
+    struct Pair pair = create_pair(token, symbol_table_size);
+    symbol_table[symbol_table_size] = pair;
+    int added_on_position = symbol_table_size;
+    symbol_table_size += 1;
+
+    return added_on_position;
+  }
+
+  void add_to_pif_constant_or_identifier(char* token, int type) {
+    int symbol_table_position = search_in_symbol_table(token);
+     
+    if (symbol_table_position == NOT_FOUND) {
+     symbol_table_position = add_to_symbol_table(token);
+    }
+
+    if (type == IDENTIFIER_TYPE) {
+      add_to_pif_with_position("<<ID>>", symbol_table_position);
+    } else {
+      add_to_pif_with_position("<<CONST>>", symbol_table_position);
+    }
+  }
+
+  void display_data_structures() {
+    printf("[ SYMBOL TABLE ]\n");
+    for (int i = 0; i < symbol_table_size; i += 1) {
+        printf("\ttoken %s | position %d\n", symbol_table[i].token, symbol_table[i].position);
+    }
+
+    printf("[ PIF ]\n");
+    for (int i = 0; i < pif_size; i += 1) {
+        printf("\ttoken %s | position %d\n", pif[i].token, pif[i].position);
+    }
+  }
+%}
+
+/* Regex definitions */
+KEYWORD (START|END|define|integer|string|bool|read|display|if|else|stop|loop|iterator|from|step|until)
+SEPARATOR (\(|\)|\[|\]|\{|\}|\,|;)
+OPERATOR (\+|-|\/|\*|=|==|!=|>|>=|<|<=|%)
+IDENTIFIER [a-z][a-zA-Z0-9]*
+INTEGER_CONST (#0#|[PN]#[1-9][0-9]*#)
+BOOL_CONST (TRUE|FALSE)
+STRING_CONST \"[a-zA-Z0-9_]*\"
+BLANK [ \t\n]+
+
+/* Rules - pattern to be matched and corresponding action to be executed */
+%%
+{KEYWORD} { printf("KEYWORD: [%s]\n", yytext); add_to_pif_no_position(yytext); }
+{SEPARATOR} { printf("SEPARATOR: [%s]\n", yytext); add_to_pif_no_position(yytext); }
+{OPERATOR} { printf("OPERATOR: [%s]\n", yytext); add_to_pif_no_position(yytext); }
+{IDENTIFIER} { printf("IDENTIFIER: [%s]\n", yytext); add_to_pif_constant_or_identifier(yytext, IDENTIFIER_TYPE); }
+{INTEGER_CONST} { printf("INTEGER_CONST: [%s]\n", yytext); add_to_pif_constant_or_identifier(yytext, CONST_TYPE); }
+{BOOL_CONST} { printf("BOOL_CONST: [%s]\n", yytext); add_to_pif_constant_or_identifier(yytext, CONST_TYPE); }
+{STRING_CONST} { printf("STRING_CONST: [%s]\n", yytext); add_to_pif_constant_or_identifier(yytext, CONST_TYPE); }
+{BLANK} { }
+. { printf("Lexical error: could not classify token %s\n", yytext); exit(1); }
+%%
+
+int main( argc, argv )
+int argc;
+char **argv;
+{
+    ++argv, --argc; /* skip over program name */
+    if ( argc > 0 )
+      yyin = fopen( argv[0], "r" );
+    else
+     yyin = stdin;
+    yylex(); /* contains the generated C code corresponding to the defined rules */
+    display_data_structures();
+
+    return 0;
+}

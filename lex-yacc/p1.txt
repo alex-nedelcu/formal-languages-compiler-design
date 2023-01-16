@@ -1,0 +1,29 @@
+START
+
+    define integer first;
+    define integer second;
+    define integer third;
+
+    read(first);
+    second = #0#;
+    read(third);
+
+    define integer min = first;
+
+    if (
+            second
+            <=
+            min
+     ) {
+        min = second;
+    }
+
+    if (third <=
+     min) {
+        min = third;
+    }
+
+    display("minimum_value_is_");
+    display(min);
+
+END
